@@ -1,0 +1,222 @@
+<mujoco model="ballooance">
+
+  <!-- ============================================================
+       BALLOOANCE - Modular Inflatable Robot
+       Dimensions sourced from Grasshopper model (converted mm → m)
+
+       CORE:
+         Cube inscribed in circumscribed sphere R = 45mm
+         Edge length L = 2R/√3 = 51.96mm
+         Half-size h = 25.98mm ≈ 0.026m
+         8 corners at (±0.026, ±0.026, ±0.026)
+
+       PLATE:
+         Located at each cube corner
+         Base circle radius r = 21.10mm = 0.0211m
+         Outward normal = normalized direction from center to corner
+
+       BALLOON (trimmed sphere):
+         Base radius r = 21.10mm (fixed)
+         Deflate : d = 20mm → sphere R = √(r²+d²) = 29mm, height = 49mm
+         Inflate : d = 78mm → sphere R = 81mm, height = 159mm
+         Joint travel = 78 - 20 = 58mm = 0.058m
+
+       MUJOCO APPROXIMATION:
+         Balloon = sphere geom, radius dynamically updated via Python
+         Slide joint along outward corner direction, range [0, 0.058m]
+         Initial offset from plate = d_min * outward = 0.020 * (±0.5774...)
+  ============================================================ -->
+
+  <compiler angle="radian" autolimits="true"/>
+
+  <!-- ============================================================
+       [物理参数 1] 全局仿真设置
+         timestep  : 每步时间（秒），越小越精确但越慢，推荐 0.001~0.005
+         gravity   : 重力加速度 (x, y, z)，标准 -9.81
+         iterations: 接触求解迭代次数，越大越稳定
+  ============================================================ -->
+  <option timestep="0.001" gravity="0 0 -9.81" iterations="200" solver="Newton"/>
+
+  <visual>
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.6 0.6 0.6"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.8 0.9 1.0" rgb2="0.4 0.6 0.8" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.85 0.85 0.85" rgb2="0.7 0.7 0.7" width="512" height="512"/>
+    <material name="grid_mat"    texture="grid" texrepeat="4 4" reflectance="0.1"/>
+    <material name="core_mat"    rgba="1.0 0.5 0.1 1.0"/>
+    <material name="plate_mat"   rgba="0.2 0.8 0.3 1.0"/>
+    <material name="balloon_mat" rgba="0.8 0.6 0.9 0.55"/>
+  </asset>
+
+  <!-- ============================================================
+       [物理参数 2] 默认 geom 接触参数（作用于所有 geom，除非单独覆盖）
+
+         friction  : "滑动摩擦  扭转摩擦  滚动摩擦"
+                     滑动摩擦是最关键的，现实橡胶气球约 1.5~4.0
+                     数值越大越难滑动 → 推荐调节范围 1.0 ~ 6.0
+
+         condim    : 接触维度，6 = 完整摩擦锥（含扭转），推荐保持 6
+
+         solimp    : 接触柔顺性 "dmin dmax width"，控制接触软硬
+                     solimp="0.95 0.99 0.001" → 更硬的接触（更真实）
+                     solimp="0.8  0.9  0.01"  → 更软的接触（更稳定）
+
+         solref    : 接触恢复 "timeconst dampratio"
+                     solref="0.01 1" → 快速恢复（硬接触）
+                     solref="0.05 1" → 慢速恢复（软接触，减少抖动）
+  ============================================================ -->
+  <default>
+    <geom condim="6"
+          friction="6.0 0.3 0.1"
+          solimp="0.98 0.999 0.0001"
+          solref="0.005 1"/>
+    <!-- [物理参数 5] ball joint 默认属性
+         stiffness : 关节弹性，越大越能把气球推力传递给core
+                     0 = 完全软（力消散），100~500 = 合理传递范围 -->
+    <joint damping="1.0" stiffness="200"/>
+  </default>
+
+  <worldbody>
+
+    <!-- ============================================================
+         [物理参数 3] 地面摩擦
+           与气球的实际摩擦力取两者中的【较小值】
+           所以地面和气球的 friction 都要同步调高才有效
+    ============================================================ -->
+    <geom name="floor" type="plane" size="2 2 0.1" material="grid_mat"
+          friction="5.0 0.2 0.1"/>
+
+    <!-- ============================================================
+         [物理参数 4] Core 质量
+           mass : 中心结构的质量（kg），影响翻滚难度
+                  现实中估计约 0.1~0.5 kg，越轻越容易被气球推动
+    ============================================================ -->
+    <body name="core" pos="0 0 0.07">
+      <freejoint name="root"/>
+      <geom name="core_geom" type="box" size="0.026 0.026 0.026"
+            mass="0.2" material="core_mat"/>
+      <site name="core_site" size="0.003"/>
+
+      <!-- ============ BALLOON 0 : corner (+,+,+)  outward = ( 1, 1, 1)/√3 ============ -->
+      <body name="plate_0" pos="0.026 0.026 0.026">
+        <joint name="joint_0" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_0_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <!-- ============================================================
+             [物理参数 5] 气球伸出关节阻尼
+               damping : 滑动关节的阻尼，越大气球伸出/收缩越"粘滞"
+                         推荐范围 0.2 ~ 2.0
+        ============================================================ -->
+        <body name="balloon_0" pos="0.01155 0.01155 0.01155">
+          <joint name="expand_0" type="slide" axis="0.5774 0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <!-- ============================================================
+               [物理参数 6] 气球初始尺寸（运行时由 Python 动态更新）
+                 size : 初始球半径（m），Python 会在每步覆盖此值
+                        deflated ≈ 0.029m，inflated ≈ 0.081m
+               [物理参数 7] 气球质量
+                 mass : 单个气球质量（kg），实际气球约 0.02~0.08 kg
+          ============================================================ -->
+          <geom name="balloon_0_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 1 : corner (+,+,-)  outward = ( 1, 1,-1)/√3 ============ -->
+      <body name="plate_1" pos="0.026 0.026 -0.026">
+        <joint name="joint_1" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_1_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_1" pos="0.01155 0.01155 -0.01155">
+          <joint name="expand_1" type="slide" axis="0.5774 0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_1_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 2 : corner (+,-,+)  outward = ( 1,-1, 1)/√3 ============ -->
+      <body name="plate_2" pos="0.026 -0.026 0.026">
+        <joint name="joint_2" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_2_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_2" pos="0.01155 -0.01155 0.01155">
+          <joint name="expand_2" type="slide" axis="0.5774 -0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_2_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 3 : corner (+,-,-)  outward = ( 1,-1,-1)/√3 ============ -->
+      <body name="plate_3" pos="0.026 -0.026 -0.026">
+        <joint name="joint_3" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_3_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_3" pos="0.01155 -0.01155 -0.01155">
+          <joint name="expand_3" type="slide" axis="0.5774 -0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_3_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 4 : corner (-,+,+)  outward = (-1, 1, 1)/√3 ============ -->
+      <body name="plate_4" pos="-0.026 0.026 0.026">
+        <joint name="joint_4" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_4_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_4" pos="-0.01155 0.01155 0.01155">
+          <joint name="expand_4" type="slide" axis="-0.5774 0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_4_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 5 : corner (-,+,-)  outward = (-1, 1,-1)/√3 ============ -->
+      <body name="plate_5" pos="-0.026 0.026 -0.026">
+        <joint name="joint_5" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_5_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_5" pos="-0.01155 0.01155 -0.01155">
+          <joint name="expand_5" type="slide" axis="-0.5774 0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_5_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 6 : corner (-,-,+)  outward = (-1,-1, 1)/√3 ============ -->
+      <body name="plate_6" pos="-0.026 -0.026 0.026">
+        <joint name="joint_6" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_6_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_6" pos="-0.01155 -0.01155 0.01155">
+          <joint name="expand_6" type="slide" axis="-0.5774 -0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_6_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+      <!-- ============ BALLOON 7 : corner (-,-,-)  outward = (-1,-1,-1)/√3 ============ -->
+      <body name="plate_7" pos="-0.026 -0.026 -0.026">
+        <joint name="joint_7" type="ball" range="0 0.52" damping="0.2"/>
+        <geom name="plate_7_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
+        <body name="balloon_7" pos="-0.01155 -0.01155 -0.01155">
+          <joint name="expand_7" type="slide" axis="-0.5774 -0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <geom name="balloon_7_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
+        </body>
+      </body>
+
+    </body><!-- end core -->
+  </worldbody>
+
+  <!-- ============================================================
+       [物理参数 8] 执行器刚度
+         kp : position 控制的比例增益
+              越大气球伸出/收缩越快越硬，推荐范围 20 ~ 200
+              注意：kp 只控制关节位移速度，气球尺寸变化速度
+              由 test.py 里的 INFLATE_SECONDS 控制
+  ============================================================ -->
+  <actuator>
+    <position name="act_0" joint="expand_0" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_1" joint="expand_1" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_2" joint="expand_2" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_3" joint="expand_3" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_4" joint="expand_4" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_5" joint="expand_5" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_6" joint="expand_6" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_7" joint="expand_7" kp="80" gear="1" ctrlrange="0 0.058"/>
+  </actuator>
+
+  <sensor>
+    <framepos    name="core_pos"    objtype="body" objname="core"/>
+    <framelinvel name="core_vel"    objtype="body" objname="core"/>
+    <frameangvel name="core_angvel" objtype="body" objname="core"/>
+    <framequat   name="core_quat"   objtype="body" objname="core"/>
+  </sensor>
+
+</mujoco>
