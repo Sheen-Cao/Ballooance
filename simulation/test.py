@@ -47,9 +47,9 @@ H, I, D = HOLD, INFLATE, DEFLATE
 #
 GAIT_SEQUENCE = [
     #           0  1  2  3  4  5  6  7
-    (80, [H, I, H, I, H, H, H, H]),  # balloon 1 和 3 充气（+x 底部）→ 向 -x 翻滚
+    (80, [H, I, H, H, H, I, H, H]),  # balloon 1 和 3 充气（+x 底部）→ 向 -x 翻滚
     (80, [H, H, H, H, H, H, H, H]),  # 全部 HOLD，观察静止
-    (80, [H, D, H, D, H, H, H, H]),  # balloon 1 和 3 放气
+    (80, [H, D, H, H, H, D, H, H]),  # balloon 1 和 3 放气
 ]
 
 
