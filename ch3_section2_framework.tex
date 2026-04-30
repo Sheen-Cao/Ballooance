@@ -1,0 +1,44 @@
+\section{Cospherical Polyhedral Framework}
+\label{sec:cospherical-framework}
+
+This section introduces the geometric framework that organizes the rest of the methodology. Its purpose is to give the design space a vocabulary in which different robot configurations can be enumerated, fabricated, and compared on equal terms.
+
+\subsection{Polyhedra as a Design Vocabulary}
+\label{subsec:polyhedral-vocabulary}
+
+A polyhedron is a finite three-dimensional shape with a small set of fully specifiable parameters: the number of vertices, the connectivity between them, the symmetry group of the whole, and the metric distances between any pair. Polyhedra also have a long mathematical history; their properties have been studied since antiquity, and their vertex coordinates can be looked up rather than derived. For a thesis whose central question is how the geometric arrangement of modules shapes what an assembled robot can do, this combination of features is unusually convenient. It lets the design space be parameterized by the choice of polyhedron itself, rather than by a tangle of independent variables.
+
+Concretely, the methodology treats each polyhedron as a template. A balloon module is placed at every vertex, and the polyhedron's edges define the topology of the resulting body, that is, which modules are neighbors and how many neighbors each module has. To move between configurations is then to swap one polyhedral template for another, with the modules and the actuation system kept the same. The only thing that changes between experiments is the geometry.
+
+\subsection{The Cospherical Constraint}
+\label{subsec:cospherical-constraint}
+
+Polyhedra alone do not give a fair comparison, because different polyhedra come at different overall scales. A tetrahedron and a cube with the same edge length differ in their circumscribing radius, in their bounding volume, and in how far each module sits from the body's center. To make the comparison meaningful, the framework imposes a single additional constraint: \textit{all polyhedra in the family share an identical circumscribing sphere}. Every vertex of every polyhedron sits at the same distance \(R\) from the body's center, so every balloon module is, at rest, the same distance from the center as every other module in any of the configurations.
+
+This cospherical constraint has three consequences worth naming. First, the modules themselves do not need to be redesigned between configurations: the same balloon, the same valve, and the same connector are reusable, and only the central skeleton changes. Second, the comparison becomes one of \textit{topology} rather than of \textit{scale}: any difference in motion behaviour between, say, a tetrahedron and an octahedron cannot be attributed to one being larger than the other. Third, the bodies acquire a built-in geometric symmetry: because every vertex is equidistant from the center, no orientation of the body is privileged at rest. This is the balance-free property introduced as a principle in \cref{sec:shape-changing}, here made concrete. Any face of the assembled robot can become the ground without the body falling sideways, since the robot's geometric center remains at the center of its inscribed sphere.
+
+\subsection{The Four Configurations}
+\label{subsec:four-configurations}
+
+Within the cospherical family, this thesis selects four polyhedra (\textit{\cref{fig:cospherical_configurations}}) spanning a range of module counts and symmetry types. The four are chosen to cover a comparable range of modular complexity while remaining within the eight-balloon capacity of the current pneumatic system (\cref{sec:pneumatic-system}), and to include both Platonic and non-Platonic options.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Geometric parameters of the four cospherical configurations. Edge lengths are reported for a circumscribed sphere of unit radius; the trigonal bipyramid has two edge classes because the polyhedron is not regular.}
+\label{tab:cospherical-params}
+\begin{tabular}{@{}l c c c l l@{}}
+\toprule
+\textbf{Configuration} & \textbf{Modules} & \textbf{Edges} & \textbf{Faces} & \textbf{Symmetry} & \textbf{Edge length at \(R=1\)} \\
+\midrule
+Tetrahedron        & 4 & 6  & 4 & \(T_d\)    & \(2\sqrt{2/3} \approx 1.633\) \\
+Trigonal bipyramid & 5 & 9  & 6 & \(D_{3h}\) & \(\sqrt{3} \approx 1.732\) (equatorial), \(\sqrt{2} \approx 1.414\) (axial) \\
+Octahedron         & 6 & 12 & 8 & \(O_h\)    & \(\sqrt{2} \approx 1.414\) \\
+Cube               & 8 & 12 & 6 & \(O_h\)    & \(2/\sqrt{3} \approx 1.155\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The four configurations sit at different points along several axes worth highlighting. By module count, the tetrahedron (four modules) is the simplest three-dimensional polyhedron and serves as the lower-bound test case, while the cube (eight modules) is the largest configuration the current actuation system can drive; the octahedron (six) and trigonal bipyramid (five) fill the middle. By symmetry, the tetrahedron, octahedron, and cube are Platonic solids with high-order symmetry groups, while the trigonal bipyramid is non-Platonic with reduced symmetry and provides a useful contrast point. By dual relationship, the cube and the octahedron are dual polyhedra: the centers of the cube's faces are the vertices of an inscribed octahedron, and vice versa, which means the two configurations share the same symmetry group despite having different module counts and very different visual appearance. These choices give the comparison enough range to test whether topology matters in a non-trivial way, while keeping each configuration small enough to fabricate and instrument with the equipment available.
+
+The next sections describe how these geometric specifications translate into a physical robot: first through simulation (\cref{sec:simulation-strategy}), then through the design of the modules and the connector core (\cref{sec:module-design}), and finally through the pneumatic actuation system (\cref{sec:pneumatic-system}) that drives them.

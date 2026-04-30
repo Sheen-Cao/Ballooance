@@ -1,0 +1,1101 @@
+Designing Emergent Behavior in
+Shape-Changing Robot Swarms:
+Organizational Diﬀerentiation,
+Embodiment, and Human
+Intervention
+
+Sheen Cao
+
+A thesis submitted in partial fulﬁllment of the requirements for
+the degree of
+Master of Science in Computational Design
+at
+Carnegie Mellon University
+Pittsburgh, Pennsylvania
+December 15, 2025
+
+Abstract
+Emergent behavior in complex systems arises from local interactions and distributed feedback
+without centralized control, producing rich global organization. While extensively studied
+in natural systems and simulations, emergence in designed robotic systems remains diﬃcult
+to intentionally shape, compare, and evaluate. In particular, how organizational structure,
+physical embodiment, and human intervention jointly inﬂuence emergent swarm behavior is
+still poorly understood.
+This thesis investigates how organizational diﬀerentiation and feedback policies, embodied robotic constraints, and human-in-the-loop cybernetic control can be designed to modulate the complexity, adaptability, and legibility of emergent behaviors in robotic swarms.
+Focusing on modular and reconﬁgurable robotic systems, the research frames emergence not
+as a byproduct of control algorithms, but as a tunable behavioral outcome shaped by system
+organization and interaction structure.
+The work combines digital swarm simulations, physical prototyping of reconﬁgurable
+modules, and human-interaction experiments to systematically explore how variations in
+communication topology, role diﬀerentiation, and intervention modalities aﬀect emergent
+patterns. A set of measurable behavioral metrics, including pattern diversity, adaptability,
+robustness, and human interpretability, is proposed to evaluate emergent complexity across
+conﬁgurations.
+By establishing a comparative evaluation framework for emergence in robotic swarms,
+this research contributes a design-oriented understanding of how complex behaviors can be
+intentionally structured, intervened upon, and assessed in humanrobot collectives.
+
+i
+
+Acknowledgments
+I would like to thank...
+
+ii
+
+Contents
+Abstract
+
+i
+
+Acknowledgments
+
+ii
+
+1 Introduction
+1.1 Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.1.1 Emergence as a Design Problem . . . . . . . . . . . . . . . . . . . . .
+1.1.2 Limits of Current Swarm Robotics Approaches . . . . . . . . . . . . .
+1.1.3 Research Questions and Hypotheses . . . . . . . . . . . . . . . . . . .
+1.1.4 Research Structure . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+1
+1
+1
+2
+2
+3
+
+2 Background and Literature Review
+2.1 Dialectical Framing: From Opposition to Co-evolution . . . . . . . . . . . .
+2.1.1 Synthesis: From Dialectics to Design Space . . . . . . . . . . . . . . .
+2.1.2 Toward Reconﬁgurable Morphological Systems . . . . . . . . . . . . .
+2.2 Emergent Behavior in Complex Systems . . . . . . . . . . . . . . . . . . . .
+2.3 Emergence in Robotic Systems . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.3.1 Soft Robotics and Morphological Computation . . . . . . . . . . . . .
+2.3.2 Human Intervention and Cybernetic Control . . . . . . . . . . . . . .
+
+6
+6
+7
+8
+8
+9
+9
+11
+
+3 Problem Framing and Models
+3.0.1 Models as a Research Methodology . . . . . . . . . . . . . . . . . . .
+
+13
+13
+
+4 Methodology
+4.1 Methods . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.1.1 Simulation Development (Isaac Sim + Unity/MR) . . . . . . . . . . .
+4.1.2 Robot Design and Embodiment Variables . . . . . . . . . . . . . . . .
+4.1.3 Physical Prototyping (embodiment as evidence) . . . . . . . . . . . .
+
+18
+18
+19
+22
+25
+
+iii
+
+Contents
+4.1.4
+4.1.5
+
+iv
+Evaluation: operationalizing “complexity” into measurable success criteria . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Experimental design summary: hypotheses and interventions . . . . .
+
+26
+28
+
+5 Experiments and Results
+
+30
+
+6 Discussion and Contributions
+
+31
+
+7 Conclusion and Future Work
+
+32
+
+References
+
+33
+
+A Additional Materials
+
+36
+
+List of Figures
+1.1
+
+Conceptual-dimensions Three coupled dimensions shaping emergent behavior in robot swarms. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+Reference model for emergent swarm behavior. The model organizes
+design factors along two axes. Vertically, factors are structured from Input
+(directly designable parameters), through Inﬂuence (mediated system dynamics), to Output (success criteria of emergent behavior). Horizontally, the model
+spans Human Factor, Organization, and Embodiment, capturing how human
+intervention, swarm coordination, and physical module design jointly shape
+emergent outcomes. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3.2 Impact model linking design interventions to measurable emergent
+outcomes. The model speciﬁes how interventions on organizational structure and embodied morphology inﬂuence mediated dynamics such as feedback propagation, role diversity, and reconﬁguration. These inﬂuences are
+evaluated using measurable success criteria, enabling comparative analysis of
+emergent behavior across swarm conﬁgurations. . . . . . . . . . . . . . . . .
+
+3
+
+3.1
+
+Swarm robot behavior simulation in the Unity platform with 2 diﬀerent
+perspectives. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.2 Diﬀerent geometries for the central connector. Alternative connector geometries deﬁne distinct contact interfaces between modules, inﬂuencing
+connection stability, allowable relative motion, and force transmission. By
+varying connector shape while keeping actuation mechanisms constant, the
+study isolates geometric embodiment eﬀects on swarm-level behavior. . . . .
+4.3 Modular structure enabling reconﬁguration. The modular architecture
+allows units to form, break, and reorganize connections, enabling dynamic
+changes in swarm topology. This capability supports experimental manipulation of connectivity, role diﬀerentiation, and organizational structure. . . . .
+
+16
+
+17
+
+4.1
+
+v
+
+19
+
+23
+
+24
+
+List of Tables
+
+vi
+
+1
+
+Introduction
+
+1.1
+
+Introduction
+
+Emergent collective behaviorsuch as ﬂocking birds, ant colonies, or cellular tissuesoften arises
+without centralized control. Instead, complex global patterns emerge from many agents
+following simple local rules. This phenomenon, commonly referred to as emergence, has
+been widely studied in ﬁelds such as biology, physics, and complex systems science. In
+recent years, emergence has also become an important aspiration in robotics and interactive
+systems, where designers seek to build collectives of simple agents that can adapt, reorganize,
+and respond to changing environments.
+As robotic systems increasingly operate in open-ended, uncertain, and human-centered
+contexts, centralized control and exhaustive pre-programming become impractical. Swarm
+robotics, modular robotics, and soft robotic systems promise scalability and adaptability,
+yet they also raise a fundamental challenge: how to design systems whose behavior is not
+explicitly scripted, but emerges through interaction. This thesis addresses this challenge by
+treating emergence not merely as a phenomenon to be observed, but as a design problem to
+be systematically explored.
+
+1.1.1
+
+Emergence as a Design Problem
+
+Emergence is often celebrated for its aesthetic richness and adaptive potential, but it also
+poses a diﬃculty for engineering and design. By deﬁnition, emergent behavior cannot be
+fully predicted or controlled from the behavior of individual agents alone. While this indeterminacy is a strength in natural systems, it complicates the design of robotic collectives
+intended to function reliably in real-world environments.
+From a design perspective, the central question is not whether emergence can occur, but
+under what conditions it arises, how its properties vary, and how it can be shaped without
+eliminating its open-ended character. As robotic systems expand toward architectural scale,
+adaptive materials, and long-term human interaction, understanding how emergent behavior
+1
+
+Chapter 1. Introduction
+
+2
+
+can be intentionally inﬂuenced becomes increasingly important. Designing for emergence
+therefore represents a shift from prescribing outcomes to designing the conditions under
+which behaviors unfold.
+
+1.1.2
+
+Limits of Current Swarm Robotics Approaches
+
+Despite extensive research in swarm robotics and multi-agent systems, current approaches
+tend to emphasize algorithmic control and optimization. Many systems rely on ﬁxed local
+policies, centrally tuned parameters, or learning-based controllers that aim to produce speciﬁc target behaviors. While eﬀective in controlled settings, such approaches often struggle
+to generalize, adapt, or scale when system morphology, environment, or human involvement
+changes.
+At the same time, advances in soft robotics and modular robotic systems highlight the
+role of physical embodiment in shaping behavior. Material properties, geometry, actuation
+mechanisms, and connectivity can constrain and enable interactions in ways that reduce
+control complexity. However, embodiment is frequently treated as an engineering constraint
+rather than as an explicit design variable for shaping collective behavior.
+Human–robot interaction research further complicates this picture. While humans are
+commonly involved as supervisors, operators, or collaborators, they are rarely considered as
+participants within the feedback loops that govern emergent swarm behavior. As a result, the
+interaction between organizational structure, embodied constraints, and human intervention
+remains underexplored.
+Taken together, these limitations point to a gap: although emergent behavior can be
+produced in robotic swarms, there is limited understanding of how it can be systematically
+shaped through design choices across organization, embodiment, and human interaction.
+
+1.1.3
+
+Research Questions and Hypotheses
+
+As shown in Figure 1.1, emergent swarm behavior is shaped through a closed-loop interaction
+between organizational policies, embodied constraints, and human feedback.
+This thesis investigates how emergent behavior in shape-changing robot swarms can
+be intentionally inﬂuenced through design. Rather than optimizing a single controller or
+task performance metric, the research focuses on how design decisions alter the richness,
+adaptability, and legibility of collective behavior.
+The central research question is:
+How can diﬀerentiated organization and local policies increase the complexity of
+emergent behavior in shape-changing robot swarms?
+
+Chapter 1. Introduction
+
+3
+
+Figure 1.1: Conceptual-dimensions Three coupled dimensions shaping emergent behavior in robot swarms.
+To address this question, the thesis advances two primary hypotheses:
+H1 Organizational Diﬀerentiation Hypothesis. Introducing role diﬀerentiation
+within an otherwise homogeneous swarmsuch as variations in sensitivity thresholds, communication ranges, or actuation roleswill produce more diverse and adaptive emergent behaviors
+than a fully identical swarm.
+H2 Morphological Modularity Hypothesis. Introducing morphing capabilities at
+the module levelsuch as inﬂatable structures or expanded connection conditionswill increase
+the range of physically realizable interactions, leading to a measurable increase in swarm
+behavioral complexity.
+Together, these hypotheses frame emergence as an outcome shaped by organizational
+structure and embodied design, rather than solely by control algorithms.
+
+1.1.4
+
+Research Structure
+
+This thesis is structured to systematically investigate how emergent behavior in shapechanging robot swarms can be shaped through organizational design, embodied constraints,
+and human intervention. The research progresses from conceptual grounding, to formal
+modeling, and ﬁnally to empirical evaluation across multiple experimental modalities.
+
+Chapter 1. Introduction
+
+4
+
+Chapter 2: Background Review synthesizes prior work across three foundational
+domains that inform this study: emergent behavior in complex systems, swarm and modular
+robotics, and human–robot interaction. Rather than providing an exhaustive survey, this
+chapter focuses on identifying conceptual gaps and tensions between these ﬁeldsparticularly
+the lack of design-oriented frameworks for shaping emergent behavior. The review establishes
+the theoretical motivation for treating emergence as a controllable design outcome rather
+than an incidental system property.
+Chapter 3: Models is the design research methodology. [1] Reference Model and
+Impact Model formalizes the conceptual framework of the thesis. A reference model is introduced to describe how designable input factorsspanning organization, embodiment, and
+human interactionmediate system dynamics and lead to observable behavioral outcomes.
+Building on this framework, an impact model derives concrete research hypotheses linking
+organizational diﬀerentiation and morphological modularity to measurable changes in emergent swarm complexity. These models serve as the analytical backbone connecting theory,
+design decisions, and experimental evaluation.
+Chapter 4: Methods describes the methodological approach used to test the proposed
+hypotheses. The chapter outlines three complementary methods:
+(1) digital swarm simulations for controlled and repeatable comparison across organizational
+and morphological conﬁgurations,
+(2) physical prototyping of modular, shape-changing robotic units to validate embodied effects under real-world constraints,
+(3) exploratory human-in-the-loop evaluations to examine how human intervention inﬂuences
+legibility, adaptability, and behavioral transitions.
+Together, these methods enable cross-validation between simulation, embodiment, and interaction.
+Chapter 5: Experiments and Results presents the experimental studies and their
+outcomes. Results are organized according to the hypotheses introduced in Chapter 3, comparing emergent behaviors across diﬀerent organizational structures and embodied conﬁgurations. Quantitative measures of behavioral complexity are complemented by qualitative
+observations of pattern formation, adaptation, and robustness. This chapter emphasizes
+comparative analysis across conditions rather than isolated demonstrations.
+Chapter 6: Discussion interprets the experimental ﬁndings through the lens of the reference and impact models. The discussion reﬂects on how organizational diﬀerentiation, embodied constraints, and human intervention jointly shape emergent behavior, highlighting design trade-oﬀs, limitations, and unexpected dynamics revealed by the experiments. Broader
+implications for swarm robotics, embodied intelligence, and humanmachine co-adaptive sys-
+
+Chapter 1. Introduction
+
+5
+
+tems are also discussed.
+Chapter 7: Conclusion and Future Work summarizes the contributions of the thesis
+and outlines directions for future research. These include scaling toward larger swarms,
+integrating adaptive or programmable materials, reﬁning evaluation metrics for emergent
+complexity, and exploring long-term humanswarm co-adaptation.
+Overall, this structure supports a design-oriented investigation of emergence, moving
+from conceptual framing to empirical validation while maintaining a clear connection between
+design decisions, system dynamics, and behavioral outcomes.
+
+2
+
+Background and Literature Review
+
+2.1
+
+Dialectical Framing: From Opposition to Co-evolution
+
+To situate this research, I begin not with a singular deﬁnition, but with a series of tensionspairs of concepts that appear contradictory yet are in fact mutually constitutive. Rather
+than resolving these oppositions, this thesis treats them as productive dialectics: dynamic
+relationships that generate new forms of thinking, designing, and computing.
+Natural vs. Artiﬁcial
+Everything originates from nature, yet human intelligence has introduced a peculiar rupture:
+the capacity to produce artifacts. This marks the emergence of the artiﬁcialnot as something
+outside nature, but as a recursive extension of it.
+Antoni Gaudís claimstraight lines belong to men, curves to Godreveals a deeper distinction: artiﬁcial systems historically favor abstraction, regularity, and control, while natural
+systems embody continuous variation, adaptation, and emergence.
+However, this boundary is increasingly unstable. Contemporary bio-inspired design, synthetic biology, and soft robotics suggest that artiﬁcial systems are no longer merely imposed
+upon nature but can grow, adapt, and behave like natural ones. The artiﬁcial, in this sense,
+becomes a second-order naturea designed ecology of behaviors and materials.
+Analog vs. Digital
+Before digital computation, machines operated through continuous physical processesvoltages, rotations, and ﬂuid ﬂows. Analog systems compute through physical equivalence: the
+system itself embodies the phenomenon it models.
+The tide prediction machine is emblematic: instead of calculating tides symbolically, it
+physically simulates them through gears and pulleys. Computation here is not abstractit is
+material, embodied, and inseparable from physics.
+
+6
+
+Chapter 2. Background and Literature Review
+
+7
+
+Digital computation, by contrast, abstracts the world into discrete symbols (0/1), enabling scalability, precision, and programmability. Yet this abstraction comes at a cost: it
+separates computation from materiality.
+Today, we observe a return toward hybrid paradigms, where computation is redistributed
+between digital control and physical form. This shift suggests that the analog/digital divide
+is not binary but a spectrum of where computation happens: in code, in matter, or across
+both.
+Predictable vs. Unpredictable
+Digital systems privilege predictability. Discrete states, deterministic logic, and formal rules
+make behavior controllable and optimizable. This aligns with top-down design paradigms:
+deﬁne rules, execute processes, and predict outcomes.
+In contrast, natural and many analog systems exhibit unpredictabilitynot as noise, but as
+emergence. Systems such as reaction-diﬀusion, slime mold growth, or ﬂocking behaviors generate complex global patterns from simple local interactions. These are bottom-up processes,
+where outcomes cannot be fully prescribed in advance.
+Importantly, unpredictability is not the opposite of computation; it represents a diﬀerent
+mode of it. It reﬂects systems where computation unfolds through interaction rather than
+instruction.
+
+2.1.1
+
+Synthesis: From Dialectics to Design Space
+
+Across these three dialectics, a pattern emerges:
+• Natural ↔ Artiﬁcial: from separation to co-evolution
+• Analog ↔ Digital: from substitution to distribution of computation
+• Predictable ↔ Unpredictable: from control to negotiation with emergence
+These shifts collectively point toward a new paradigm: computation is no longer
+conﬁned to symbolic processing, but extends into material, morphological, and
+behavioral domains.
+This aligns with the notion of morphological computation, where physical form ()
+participates in information processing. Instead of treating the body as passive and control
+as centralized, intelligence is distributed across structure, material, and environment. Such
+an approach challenges the dominance of top-down control and foregrounds the co-evolution
+of form and behavior.
+
+Chapter 2. Background and Literature Review
+
+2.1.2
+
+8
+
+Toward Reconﬁgurable Morphological Systems
+
+Within this expanded computational paradigm, reconﬁgurable soft robotic systems
+emerge as a particularly compelling site of investigation.
+• From the natural–artiﬁcial dialectic, they inherit the capacity to behave like living
+systemsadaptive, compliant, and environment-responsive.
+• From the analog–digital dialectic, they embody hybrid computation: material deformation (analog) coupled with sensing, learning, and control (digital).
+• From the predictable–unpredictable dialectic, they operate at the edge of controlwhere
+behavior is not fully scripted but shaped through interaction and feedback.
+In particular, inﬂatable modular robotics introduces an additional layer: reconﬁgurability through structure. Inﬂation enables reversible, lightweight, and continuous morphological change, while modularity allows discrete recombination. Together, they form a system
+that navigates between continuity and discreteness, stability and transformation.
+Such systems are not merely robotsthey are computational morphologies: machines
+whose intelligence arises from the interplay between shape (form), matter (materiality),
+and algorithm (control).
+
+2.2
+
+Emergent Behavior in Complex Systems
+
+From local interaction to global organization. Emergent behavior is commonly described as coherent global organization arising from local interactions among many components, without a centralized controller. Classic accounts emphasize distributed feedback,
+nonlinear interactions, and sensitivity to initial conditions as mechanisms through which
+macroscopic patterns form and persist [2, 3]. In this view, self-organization is not an added
+module of control, but an outcome of repeated local rules and coupling between agents and
+environment.
+Deﬁning “complex systems” and “emergence.” Despite broad usage, “complex system” and “emergence” remain contested terms. Ladyman et al. argue that many commonly
+cited features are too vague to be analytically useful, and highlight the need to distinguish
+between qualitative descriptions and operational measures [4]. Prokopenko et al. further
+note that miscommunication often stems from unclear relations between complexity, selforganization, emergence, and adaptation, motivating complexity measures that can serve as
+
+Chapter 2. Background and Literature Review
+
+9
+
+a shared vocabulary [5]. Complementing these eﬀorts, de Haan proposes a framework for
+comparing emergence across domains by re-centering the role of the observer and abstracting
+away from speciﬁc mechanisms [6].
+Gap: controllability in designed systems. Much of the complex systems literature
+either studies naturally occurring phenomena or evaluates emergence in abstract computational models. While these works clarify how emergence arises, they less frequently address
+how emergence can be tuned in engineered artifacts: i.e., how designable parameters shape
+the reachable space of emergent behaviors, and how to compare emergent outcomes across
+diﬀerent embodiments, organizations, and interventions using shared evaluation criteria [4, 5].
+This gap becomes critical when emergence is treated as a design target rather than merely
+an observed phenomenon.
+
+2.3
+
+Emergence in Robotic Systems
+
+Robotic swarms and modular robotic systems oﬀer an engineering context where local interaction rules, sensing/actuation constraints, and communication topology can be explicitly
+designed. In these systems, emergence is not only a scientiﬁc object of explanation but
+also a practical concern: emergent behaviors must be robust, interpretable, and controllable
+enough to support task performance and human operation.
+
+2.3.1
+
+Soft Robotics and Morphological Computation
+
+Embodiment as a generator of behavior. A central argument in embodied intelligence is that morphology and material properties can function as computational resources,
+oﬄoading complexity from centralized control to body–environment dynamics. Pfeifer and
+Bongard articulate how bodies shape perception-action loops and enable adaptive behavior
+through morphology-dependent interactions [7]. Related design principles emphasize ecological balance and sensory-motor coordination, framing intelligence as an emergent property
+of coupled morphology, materials, environment, and control [8].
+Material-to-behavior mapping and reducing control complexity. In soft robotics,
+compliance, damping, and distributed actuation can produce rich behaviors with comparatively simple control signals. For example, multifunctional ﬂuidic units can embody sensing,
+actuation, and control within physical circuits, enabling self-synchronization and other passive emergent dynamics through mechanical coupling [9]. Such systems motivate a view of
+
+Chapter 2. Background and Literature Review
+
+10
+
+“behavior” as partially embedded in material and geometric constraints, rather than purely
+encoded in software.
+Relevance to this thesis. For swarm robotics, embodiment inﬂuences the behavioral
+repertoire available to local policies: what counts as a feasible interaction, what patterns are
+physically stable, and how quickly a swarm can adapt. This thesis treats embodiment not
+as a backdrop, but as a controllable layer that shapes emergent outcomes and interacts with
+organizational structure and human intervention [7, 8].
+Modular and Reconﬁgurable Robotic Systems
+Topology, connectivity, and reconﬁguration. Modular robotic systems (MRS) formalize reconﬁguration as a core capability: agents can form and break connections, change
+topology, and adapt morphology to tasks and environments. Ahmadzadeh and Masehian
+provide a comprehensive synthesis of MRS methods spanning abstraction, planning, control,
+and synchronization, while also highlighting persistent constraints in connection strength,
+communication, and coordinated action [10]. Landmark systems such as M-Blocks demonstrate self-reconﬁguration through momentum-driven lattice movements and magnetic bonding, illustrating the tight coupling between mechanical design and the space of achievable
+collective behaviors [11? ].
+Large-scale collective organization and self-assembly. At swarm scale, programmable
+self-assembly demonstrates how large numbers of simple robots can produce complex global
+forms under local rules [12]. In parallel, work on programmable self-assembly in materials and colloidal systems frames “programmability” as the design of interaction rules and
+building blocks that reliably yield target structures [13]. These precedents provide both inspiration and caution: emergence can be achieved, but systematic comparison across diﬀerent
+organizational designs and embodied constraints remains challenging.
+From ﬁxed rules to learned/evolved policies. Recent approaches use evolutionary
+and learning-based methods to discover distributed policies that yield emergent behaviors,
+shifting the focus from hand-designed rules to exploration of a behavior space. Rajbhandari and Sofge, for example, use evolutionary training to produce desired emergent group
+behaviors across diﬀerent robot embodiments in simulation [14]. Related work explicitly
+analyzes emergent behaviors under indirect swarm control, further emphasizing the need for
+characterization methods beyond task success [15].
+
+Chapter 2. Background and Literature Review
+
+11
+
+Gap: comparable studies of organization and feedback. Although prior work demonstrates that reconﬁguration, connectivity, and local policies can yield complex swarm behaviors, there remains a lack of systematic, comparable studies that isolate how organizational diﬀerentiation (e.g., role specialization, hierarchy) and feedback strategies (e.g., local
+vs. broadcast communication) modulate emergent complexity, robustness, and adaptability
+across embodiments and tasks [10, 14]. This thesis addresses this gap by proposing a comparative evaluation framework that links designable organizational factors to measurable
+emergent outcomes.
+
+2.3.2
+
+Human Intervention and Cybernetic Control
+
+Humans as part of the behavioral loop. In many real deployments, swarms are not
+fully autonomous: human operators observe swarm state, interpret emergent patterns, and
+intervene to steer collective behavior. Human-robot interaction research frames this as an
+ongoing challenge, especially when robot behavior is complex, adaptive, or diﬃcult to explain
+[16]. For swarm settings, human understanding is not merely an interface problem; it shapes
+the feasibility of control and collaboration.
+Perception and legibility of emergent behaviors. A key prerequisite for human inﬂuence is the ability to recognize and interpret emergent swarm behaviors under noise and
+time constraints. Walker et al. study human recognition of canonical emergent behaviors
+(rendezvous, ﬂocking, dispersion), showing diﬀerences in recognition diﬃculty and sensitivity
+to viewing conditions [17]. These results motivate treating legibility and interpretability as
+measurable success criteria rather than informal user impressions.
+Human feedback as a driver of discovery. Beyond recognition, human feedback can be
+integrated into the process of discovering and categorizing emergent behaviors. Mattson and
+Brown propose a human-in-the-loop approach that learns a similarity space over collective
+behaviors and combines novelty search with clustering to discover a richer taxonomy of
+emergent behaviors in simulation [18]. This line of work reframes “human intervention” from
+direct teleoperation to a cybernetic role: humans shape exploration objectives, preference
+models, and the evaluation of novelty.
+Gap: evaluation framework for how intervention changes complexity. Although
+prior work studies perception, interaction, and human-guided discovery in swarms, there
+is still no widely adopted framework that quantiﬁes how diﬀerent intervention modalities
+change emergent behavior complexity over time—for example, whether intervention increases
+
+Chapter 2. Background and Literature Review
+
+12
+
+behavioral diversity, improves robustness, or collapses complexity into more predictable patterns [17, 18]. This thesis targets this gap by linking intervention modalities to measurable
+changes in emergent behavior metrics, and by positioning humans as an explicit element in
+the feedback loop rather than an external operator.
+
+3
+
+Problem Framing and Models
+
+3.0.1
+
+Models as a Research Methodology
+
+This thesis treats models not only as descriptive diagrams but as a research methodology for
+structuring design, experimentation, and evaluation. Following the Design Research Methodology (DRM) proposed by Blessing and Chakrabarti [1], the work uses explicit models to
+link designable inputs, mediated system dynamics, and measurable outcomes. The Reference
+Model synthesizes prior literature into a structured design space for emergent swarm behavior, while the Impact Model translates this structure into concrete interventions, hypotheses,
+and evaluation criteria. Together, these models guide experimental design, ensure comparability across conditions, and frame emergence as a designable and assessable outcome rather
+than a purely descriptive phenomenon.
+Reference Model: Structuring Emergence as a Design Problem
+To synthesize the diverse strands of literature reviewed above, this thesis introduces
+a design-oriented reference model that frames emergent swarm behavior as a structured
+design problem rather than a purely descriptive phenomenon. Drawing from complex systems
+theory, swarm robotics, and humanrobot interaction, the model provides a shared conceptual
+structure for reasoning about how emergent behaviors arise, how they can be inﬂuenced
+through design, and how their outcomes can be evaluated.
+As illustrated in Figure 3.1, the reference model is structured along two complementary
+dimensions.
+Input, Inﬂuence, and Output. Along the vertical axis, the model distinguishes between
+Input factors, Inﬂuence mechanisms, and Output criteria. Input factors correspond to
+parameters that can be directly designed and speciﬁed prior to system deployment, such as
+communication topology, degree of organizational diﬀerentiation, module morphology, and
+connection conditions. Inﬂuence factors represent mediated system dynamics that emerge
+during operation, including feedback propagation, adaptability, pattern transition frequency,
+13
+
+Chapter 3. Problem Framing and Models
+
+14
+
+and locomotion capability. Output criteria capture the observable qualities by which emergent behavior is evaluated, including behavioral complexity, robustness, and legibility.
+This separation reﬂects a central insight from complex systems research: emergent behavior cannot be directly controlled, but the conditions under which it arises can be systematically shaped through design choices. By distinguishing designable inputs from mediated
+dynamics and evaluative outcomes, the model clariﬁes what aspects of emergence are controllable, what must be inferred through observation, and what constitutes meaningful research
+results.
+Human Factor, Organization, and Embodiment. Along the horizontal axis, the
+model situates swarm behavior within a coupled socio-technical system. The Human Factor captures how humans observe, interpret, and intervene in swarm behavior, including sensitivity to human input and intervention modalities. The Organization domain describes
+how agents coordinate through local policies, communication structures, role assignments,
+and swarm scale. The Embodiment domain represents the physical and material constraints of the robotic modules, including morphing capability, connective ability between
+modules, and locomotion aﬀordances.
+Across these domains, the model highlights several mediating mechanisms emphasized
+in prior work. Feedback range and communication topology shape the speed and locality of
+information propagation; organizational diﬀerentiation determines how many distinct local
+rules coexist within the swarm; and embodied constraints delimit the action space available
+to local policies. Emergent behavior arises from the interaction of these mechanisms rather
+than from any single factor in isolation.
+Overall, the reference model functions as a conceptual synthesis of the background literature, establishing a structured vocabulary for discussing emergence as a design outcome
+that is shapedbut not centrally controlledby human, organizational, and embodied factors.
+Impact Model: Interventions, Hypotheses, and Evaluation Logic
+While the reference model structures the design space, the impact model translates this
+structure into a causal research logic that links design interventions to measurable changes in
+emergent swarm behavior. In contrast to studies that present emergence as an observed side
+eﬀect of control policies or learning algorithms, the impact model treats emergent complexity
+as an explicit outcome variable.
+Figure 3.2 extends the reference model by explicitly mapping design interventions to
+mediated mechanisms and evaluative criteria.
+
+Chapter 3. Problem Framing and Models
+
+15
+
+From emergence as description to emergence as outcome. Much of the swarm
+robotics literature demonstrates emergent behavior through compelling examples, yet often
+lacks a framework for comparing how diﬀerent design choices alter the complexity of those
+behaviors. The impact model addresses this gap by framing emergent complexity as a
+dependent variable that can be systematically compared across organizational and embodied
+conﬁgurations.
+Design interventions. Two primary intervention dimensions are derived from the reference model. The ﬁrst concerns organizational diﬀerentiation, including the introduction
+of heterogeneous agent roles within an otherwise homogeneous swarm. This may involve
+diﬀerences in sensitivity thresholds, actuation roles, or communication ranges, while maintaining a shared control architecture. The second concerns morphological modularity,
+in which robot modules gain shape-changing capabilities (e.g., inﬂatable or morphing structures) and more permissive connection conditions, expanding the set of physically realizable
+collective behaviors.
+Rather than prescribing global behavior, these interventions act indirectly through mediated mechanisms such as feedback range, adaptability, and reconﬁguration dynamics.
+Hypotheses. Based on this causal structure, the thesis advances the following hypotheses:
+H1 Organizational Diﬀerentiation Hypothesis. Introducing role diﬀerentiation
+within an otherwise homogeneous shape-changing swarm will produce a greater diversity of
+emergent behavior patterns and increased adaptability compared to a fully identical swarm
+operating under matched conditions.
+H2 Morphological Modular Geometry Hypothesis. Enhancing the morphing
+ability and connection aﬀordances of robot modules will lead to a measurable increase in
+emergent behavioral complexity, enabling a broader range of collective formations and improved robustness to environmental constraints.
+Evaluation logic. To assess these hypotheses, the impact model emphasizes comparative
+evaluation across conﬁgurations rather than reliance on a single task-based metric. Emergent
+behavior is evaluated using a combination of behavioral richness, adaptability, robustness,
+and legibility, allowing diﬀerent organizational and embodied designs to be analyzed on equal
+terms.
+Together, the reference and impact models establish a coherent bridge between the background literature and the proposed methods, framing emergence as a designable, measurable,
+and comparable phenomenon in shape-changing robotic swarms.
+
+Chapter 3. Problem Framing and Models
+
+16
+
+Figure 3.1: Reference model for emergent swarm behavior. The model organizes design factors along two axes. Vertically, factors are structured from Input (directly designable
+parameters), through Inﬂuence (mediated system dynamics), to Output (success criteria of
+emergent behavior). Horizontally, the model spans Human Factor, Organization, and Embodiment, capturing how human intervention, swarm coordination, and physical module design
+jointly shape emergent outcomes.
+
+Chapter 3. Problem Framing and Models
+
+17
+
+Figure 3.2: Impact model linking design interventions to measurable emergent
+outcomes. The model speciﬁes how interventions on organizational structure and embodied
+morphology inﬂuence mediated dynamics such as feedback propagation, role diversity, and
+reconﬁguration. These inﬂuences are evaluated using measurable success criteria, enabling
+comparative analysis of emergent behavior across swarm conﬁgurations.
+
+4
+
+Methodology
+
+4.1
+
+Methods
+
+This thesis investigates a design-oriented question: how do organizational diﬀerentiation and
+local interaction policies, together with embodied modular morphing, increase the emergent
+behavioral complexity of a shape-changing robot swarm? To answer this question, we construct a multi-stage experimental pipeline that couples
+(i) physics-based swarm simulation,
+(ii) mixed-reality human-in-the-loop interaction tests,
+(iii) physical prototyping, with a uniﬁed evaluation layer that operationalizes “emergent
+complexity” into measurable proxies.
+Methodologically, the work treats emergence as a mediated outcome: designable inputs
+(module morphology, connection conditions, organizational structure, and human intervention channels) do not directly specify a target global behavior; instead, they shape the
+conditions under which global patterns appear, persist, and transition. This perspective is
+aligned with cybernetic framings of human-in-the-loop systems [16], and motivates an experimental design that emphasizes comparative regimes and perturbation-response analysis
+rather than single-demo success.
+Overview of experimental logic. We implement a two-layer simulation stack: a physical
+layer in Isaac Sim that provides credible embodied constraints (contact, friction, connection
+forces), and an interaction layer in Unity that injects human intervention as an input channel
+while preserving ﬁrst-person/immersive observation. We then translate key assumptions
+into physical prototypes to verify which emergent phenomena survive material uncertainty.
+Across all modalities, we evaluate outcomes using a shared set of metrics:
+(1) behavior repertoire and regime diversity,
+(2) transition dynamics and adaptability,
+(3) robustness under noise/perturbation,
+(4) human legibility and intervention eﬀectiveness.
+
+18
+
+Chapter 4. Methodology
+
+19
+
+Figure 4.1: Swarm robot behavior simulation in the Unity platform with 2 diﬀerent
+perspectives.
+
+4.1.1
+
+Simulation Development (Isaac Sim + Unity/MR)
+
+Platform choice as “two-layer simulation”
+We deliberately separate physics ﬁdelity from interaction ﬁdelity. Isaac Sim is used as
+the authoritative physics engine for multi-agent dynamics: rigid-body simulation, contact
+resolution, frictional interactions, and constraint-based connections are handled in a reproducible environment, allowing controlled trials and parameter sweeps. This choice supports
+modular robotics assumptions where the feasibility of motion and reconﬁguration strongly
+depends on contact geometry and connection constraints [10? , 11].
+Unity is used as the human-facing interaction and visualization layer. As shown in the 4.1
+it provides ﬁrst-person/immersive observation, conﬁgurable user input mappings, and logging
+of human actions and subjective judgments. Crucially, the Unity layer does not replace
+physics; instead, it acts as a mediated control surface that sends high-level interventions
+(parameter modulation, triggers, or spatial cues) into the Isaac simulation. This “two-layer”
+design directly supports the thesis framing of humans as part of the behavioral loop [16]:
+humans observe emergent states, intervene through constrained channels, and re-observe the
+resulting transitions.
+
+Chapter 4. Methodology
+
+20
+
+Module modeling via behavior primitives and connection rules
+A recurring failure mode in swarm studies is that collective comparisons become unstable when individual agent capabilities are underspeciﬁed. To avoid this, we construct
+two explicit capability libraries for a single module: (i) a shape-changing primitive library
+describing what morphing actions exist and how they unfold over time, and (ii) a connection
+rule library describing when modules attach/detach and what constraints result. This abstraction strategy mirrors how modular robotics literature separates action capabilities from
+coordination algorithms [10] and how lattice-based systems formalize feasible reconﬁguration
+moves [11].
+Shape-changing primitives (morphing). Each module exposes a small set of parameterized morphing primitives such as inﬂate/deﬂate pulses, sustained expansion, and oscillatory actuation. Primitives are deﬁned by time-series parameters (rise time, frequency,
+amplitude), and by their geometric and contact consequences (volume change, contact area
+change, passability through gaps). This operationalizes the morphological computation intuition that “body” and “material” contribute to behavior generation and reduce the burden
+of centralized control [7, 8].
+Connection rules (attachment constraints). Connection is treated as a stateful constraint with measurable thresholds. We implement: (1) trigger conditions (distance threshold, orientation threshold, contact area threshold), (2) strength parameters (maximum tension/torque before failure), (3) detach logic (exceeding force thresholds or intentional release),
+and (4) topology constraints (multi-point attachment, maximum degree, and whether reconﬁguration is allowed). This parameterization is motivated by the fact that modular systems
+often hinge on the tight coupling between kinematic feasibility and connection reliability [10?
+].
+Deliverables of A2. The output of this stage is not a “nice demo” but a calibrated
+capability speciﬁcation: (i) repeatable primitive trajectories (morph curves over time), (ii)
+stable attach/detach boundaries (trigger regions in parameter space), and (iii) empirical
+distributions of failure modes (false attachments, premature detachments). These results
+directly seed the physical prototype design by providing initial parameter ranges for actuation
+bandwidth and connection tolerances.
+
+Chapter 4. Methodology
+
+21
+
+Coordination typology: scanning organization × local policy
+The goal of coordination experiments is to make organizational diﬀerentiation explicit
+and comparable, so that the Organizational Diﬀerentiation Hypothesis (H1) can be tested
+against a homogeneous baseline. Rather than implementing a single canonical swarm algorithm, we deﬁne a policy family and evaluate how behavior regimes change across organization structures and communication topologies.
+Minimal comparative set (core controls). We implement at least three conditions:
+• Homogeneous baseline: all agents share identical sensing thresholds, morphing
+bandwidth, and connection preferences.
+• Diﬀerentiated roles: at least two roles are introduced (e.g., explorer/anchor/relay),
+realized by diﬀerent sensitivity thresholds, actuation bandwidths, or communication
+radii.
+• Topology variation: local neighbor sensing versus broadcast-like information sharing
+(or sparse local graph versus global shared state).
+This design isolates the eﬀect of diﬀerentiation from the eﬀect of communication structure,
+aligning with modular robotics perspectives that treat abstraction, coordination, and synchronization as distinct layers of the problem [10].
+Parameter sweep and regime discovery. For each condition, we run parameter sweeps
+over a bounded design space: morph amplitude/frequency, connection thresholds/strength,
+neighborhood radius, and role proportion. Each run produces spatiotemporal trajectories:
+agent poses, velocity ﬁelds, connection graph time-series, and morph state sequences. The
+analysis goal is to discover regimes (recurrent collective patterns) and quantify how the
+regime landscape changes when organizational diﬀerentiation or morphing capability is introduced.
+Taxonomy building through behavior embeddings. To avoid subjective cherry-picking
+of “interesting” behaviors, we represent each trial by an aggregated behavior descriptor (e.g.,
+time-series statistics of graph connectivity, density, alignment, and morph state occupancy).
+We then cluster trials to form a taxonomy of emergent patterns and compute “richness” as
+the number and diversity of clusters. This taxonomy-based approach is consistent with the
+idea that one should explore and categorize the space of possible swarm behaviors rather than
+target a single engineered endpoint; it also parallels methods that combine novelty-driven
+exploration with clustering and similarity spaces [18].
+
+Chapter 4. Methodology
+
+22
+
+A4. Mixed-reality human-in-the-loop experiments
+Human-in-the-loop evaluation is included for two reasons. First, swarm behaviors are
+often used in contexts where a human operator must recognize the current collective mode
+and decide whether and how to intervene. Second, “organic” complexity has an irreducible
+perceptual component: behaviors that are mathematically complex may still be illegible or
+unusable for human supervision. Therefore, we separate two MR study aims and design
+tasks accordingly.
+Aim 1: legibility and recognition of emergent modes. We adapt a recognition-style
+protocol: participants view short time windows of swarm behavior and categorize the observed mode (or detect whether a transition occurred), with conﬁdence ratings and response
+times. This directly follows the premise that diﬀerent emergent behaviors have diﬀerent
+perceptual recognizability, and that recognition performance changes with noise and viewing
+time [17]. In our context, the key independent variables are organizational diﬀerentiation
+(homogeneous vs role-diﬀerentiated), morphing capability (enabled vs disabled), and visual
+noise/occlusion levels introduced in the MR display.
+Aim 2: intervention eﬀectiveness under mediated control. Participants intervene
+through constrained channels (e.g., adjusting a small set of policy parameters, triggering
+role switches, or injecting spatial cues). We log intervention frequency, type, and timing,
+then measure downstream changes in regime transitions, complexity metrics, and recovery
+dynamics. This design treats intervention as indirect control rather than direct command,
+aligning with frameworks that analyze emergent behaviors under indirect swarm control [15].
+The study does not assume participants know which behaviors are possible or desirable beforehand; instead, it emphasizes the co-adaptive process of discovery and preference, echoing
+the notion that human feedback can guide exploration of novel emergent behaviors [18].
+
+4.1.2
+
+Robot Design and Embodiment Variables
+
+To investigate how embodiment shapes emergent behavior in shape-changing robot swarms,
+this thesis explicitly parameterizes robot design as a set of controllable experimental variables.
+Rather than treating the robotic platform as a ﬁxed carrier of control policies, embodiment
+is modeled as an active contributor to system dynamics, consistent with perspectives from
+morphological computation and soft robotics. The selected variables deﬁne the design space
+of the modular inﬂatable units and are systematically explored across simulation and physical
+prototyping.
+
+Chapter 4. Methodology
+
+23
+
+Figure 4.2: Diﬀerent geometries for the central connector. Alternative connector geometries deﬁne distinct contact interfaces between modules, inﬂuencing connection stability,
+allowable relative motion, and force transmission. By varying connector shape while keeping
+actuation mechanisms constant, the study isolates geometric embodiment eﬀects on swarmlevel behavior.
+Core Geometry and Modular Topology. The ﬁrst variable concerns the geometry
+of the core connector that determines how many inﬂatable modules can be combined and
+how they are spatially arranged. Core geometries such as tetrahedral, cubic, or hybrid conﬁgurations deﬁne the maximum degree of connectivity, local symmetry, and feasible swarm
+topologies. This variable directly constrains how forces, deformations, and motion propagate
+through connected modules, inﬂuencing collective locomotion and reconﬁguration capabilities.
+The geometry of the central connector is treated as a primary embodiment variable. Different connector proﬁles introduce variation in mechanical compliance, alignment tolerance,
+and the eﬀective degrees of freedom at inter-module joints (Figure 4.2). These geometric
+diﬀerences are expected to inﬂuence how local interactions propagate through the swarm,
+aﬀecting pattern formation, locomotion modes, and the stability of emergent conﬁgurations.
+Shape-Changing Control Mechanisms. Each module is capable of shape change through
+controlled inﬂation and deﬂation of multiple inﬂatable patches. Control parameters include
+inﬂation speed, temporal resolution (timesteps), amplitude, and phase diﬀerences between
+patches. In simulation, these parameters are instantiated as continuous control signals (e.g.,
+sinusoidal phase oﬀsets), forming a library of shape-changing primitives. Variations in these
+primitives aﬀect rhythmic coordination, self-propelled motion, and coupling between neigh-
+
+Chapter 4. Methodology
+
+24
+
+Figure 4.3: Modular structure enabling reconﬁguration. The modular architecture
+allows units to form, break, and reorganize connections, enabling dynamic changes in swarm
+topology. This capability supports experimental manipulation of connectivity, role diﬀerentiation, and organizational structure.
+boring modules.
+Connection Conditions and Reconﬁgurability. Connection conditions deﬁne when
+and how modules attach or detach from one another, enabling reconﬁgurable swarm structures. These conditions include distance thresholds, orientation constraints, contact area
+requirements, and force or torque limits for maintaining connections. By varying these parameters, the system explores diﬀerent degrees of structural ﬂexibility, from rigid assemblies
+to highly dynamic, self-reorganizing conﬁgurations. This variable is central to examining
+how connectivity mediates transitions between behavioral modes.
+As illustrated in Figure 4.3, this reconﬁgurable structure enables controlled variation of
+several key embodiment-related variables, including connection degree, local topology, and
+
+Chapter 4. Methodology
+
+25
+
+the persistence of connections over time. These variables are directly linked to organizational factors in the Reference Model, such as degree of diﬀerentiation and communication
+pathways, while remaining grounded in physically realizable constraints.
+Mass Distribution and Weight Shifting. Weight is treated as a controllable variable
+through internal redistribution of ﬂuid or material within a module. By pumping liquid
+into diﬀerent sections, the center of gravity of a unit can be shifted over time. This introduces coupling between shape change and gravitational eﬀects, inﬂuencing stability, rolling
+behaviors, and collective balance, especially in uneven or constrained environments.
+Material Properties. Material choice, such as silicone gels or polyethylene-based ﬁlms,
+introduces diﬀerences in elasticity, damping, friction, and deformation limits. These properties aﬀect how shape changes translate into motion and how energy is stored or dissipated
+during interaction. Material variables are initially abstracted in simulation and later validated through targeted material tests in physical prototypes.
+Relation to Experimental Design. Together, these variables constitute the embodimentrelated input factors in the Reference Model and are manipulated independently or in combination across experimental conditions. Their eﬀects are observed through mediated system
+dynamicssuch as coordination patterns, locomotion capabilities, and reconﬁguration frequencyand evaluated using behavioral, informational, and human-centered metrics described in
+Section ??. This structured treatment enables embodiment to be studied not as an implementation detail, but as a ﬁrst-class experimental factor in emergent swarm behavior.
+
+4.1.3
+
+Physical Prototyping (embodiment as evidence)
+
+Simulation is necessary for regime discovery, but insuﬃcient as evidence of embodied emergence. Physical prototypes are therefore used to test whether key phenomena persist under
+frictional uncertainty, actuation drift, leakage, and imperfect connections. Importantly, the
+prototype stage is scoped for comparative validation rather than maximal scale: the goal is
+to reproduce regime contrasts (homogeneous vs diﬀerentiated; morphing vs non-morphing)
+in a controllable small-N setting.
+Single-module validation: morphology–behavior mapping
+We ﬁrst validate that the simulated morphing primitives correspond to physically
+achievable actuation signatures. For each primitive, we measure shape change amplitude,
+
+Chapter 4. Methodology
+
+26
+
+response time, repeatability across cycles, and actuation curves (e.g., pressure or energy
+proxy where available). This stage supports H2 by grounding the claim that morphing capability is a meaningful design input rather than a purely simulated aﬀordance. If modules
+exhibit coupling-induced phenomena such as spontaneous synchronization, we document
+these as embodied dynamics rather than controller artifacts, consistent with observations
+that mechanically coupled ﬂuidic units can yield emergent passive behaviors [9].
+Connection validation: attach/detach boundaries and constraint eﬀects
+Next, we validate connection conditions with two-module and small-chain tests. We
+measure connection success rate, failure modes, detach thresholds, and how connectivity constrains motion degrees of freedom. We explicitly compare ﬁxed connections versus reconﬁgurable connect/disconnect conditions. This stage directly operationalizes the Embodimentdomain variables “connective ability” and “connection conditions” and tests whether the
+mediated variables (e.g., locomotion capability and transition frequency) shift as predicted
+by the Reference Model.
+Small-swarm comparative experiments (N ≈ 5–20)
+Finally, we run minimal comparative experiments with a small swarm where role diﬀerentiation is physically instantiated. Role diﬀerences may be implemented through sensing
+thresholds, actuation bandwidth, or connection preferences (e.g., a role that tends to anchor
+via stronger connections versus a role that explores via faster morphing cycles). The objective is not to replicate thousand-robot demonstrations, but to establish a controlled setting
+in which organizational diﬀerentiation is visible, repeatable, and measurable.
+This stage also supports a broader design framing: rather than pushing controllability
+upward into centralized planning, the work explores how controllability can be distributed
+into building-block-level properties and interaction rules, resonating with directions that
+treat reconﬁgurable matter as a programmable substrate [19].
+
+4.1.4
+
+Evaluation: operationalizing “complexity” into measurable
+success criteria
+
+A central methodological challenge is that “organic complexity” is an abstract goal. We
+therefore evaluate success through three complementary metric groups aligned with the Output layer of the models: (C1) complexity and repertoire richness, (C2) adaptability and
+robustness, and (C3) human legibility and intervention eﬀects. The emphasis is on using
+multiple partially independent measures so that conclusions do not hinge on a single proxy.
+
+Chapter 4. Methodology
+
+27
+
+Emergent complexity and behavioral repertoire
+Repertoire size and taxonomy richness. Using the clustering-based taxonomy from A3,
+we compute the number of distinct behavior categories observed under controlled conditions,
+and how evenly trials populate those categories. This directly matches the measurable proxy
+“numbers of distinct behavior patterns.” We report cluster counts, long-tail occupancy (rarebut-recurrent modes), and between-cluster separability.
+Transition dynamics as complexity-in-motion. We quantify how often and how predictably the swarm switches between modes: transition frequency, mean dwell time per
+mode, and transition reversibility. These measures align with the Reference/Impact Model
+variables “frequency of pattern changes” and “adaptability.” In addition to raw counts, we
+compute transition matrices to characterize whether diﬀerentiation increases the variety of
+reachable modes or merely increases instability.
+Information-theoretic descriptors (supporting evidence). To strengthen claims beyond taxonomy counts, we compute information-theoretic measures on time-series features
+such as connectivity graph statistics, density ﬁelds, velocity alignment, and morph-state
+occupancy. This follows the premise that complexity, self-organization, and emergence can
+be discussed with an information-theoretic “dictionary” that improves comparability across
+systems [5]. These metrics are treated as supporting evidence rather than the sole deﬁnition
+of success.
+Adaptability and robustness under perturbation
+Emergent systems are often valued not for a single pattern, but for their ability to
+remain functional under uncertainty. We therefore evaluate:
+• Perturbation recovery time: time to return to a stable mode after external disturbances (agent removal, connection failures, pushes, terrain changes).
+• Performance under noise: degradation curves of complexity proxies under sensing
+noise, latency, and message loss.
+• Graceful degradation: how regime richness changes as a function of reduced agent
+count or impaired role capabilities.
+These tests also reﬂect practical constraints in modular robotic systems where resources,
+communication, and connection strength limit real-world deployments [10].
+
+Chapter 4. Methodology
+
+28
+
+Human factors: legibility, controllability, and intervention impact
+Legibility and recognition accuracy. From the MR recognition tasks, we compute
+recognition accuracy, response time, and conﬁdence across conditions. We further examine
+how noise and viewing time aﬀect recognition, following the logic that recognition diﬀers by
+behavior type and perceptual conditions [17]. This metric group connects directly to the
+Output variable “legibility of robot behavior.”
+Intervention eﬀectiveness as indirect control. For intervention trials, we quantify the
+causal footprint of human input: intervention rate, input-to-response latency, and pre/post
+changes in regime transitions and complexity proxies. Because the intervention channel is
+mediated rather than direct, we interpret results in the context of indirect swarm control:
+human inputs shift conditions, and global behavior responds through emergent dynamics
+[15]. Where relevant, we analyze whether human input expands the behavioral repertoire
+(discovering new modes) or compresses it (stabilizing a subset of modes).
+
+4.1.5
+
+Experimental design summary: hypotheses and interventions
+
+The full experimental design is organized to test two primary hypotheses through explicit
+interventions and controlled comparisons:
+H1: Organizational Diﬀerentiation Hypothesis. Introducing role diﬀerentiation within
+an otherwise homogeneous swarm will yield a larger and more diverse emergent repertoire
+than the baseline. This is tested by comparing homogeneous versus diﬀerentiated-role conﬁgurations under matched embodiment primitives and matched environment settings, evaluating changes in taxonomy richness, transition structure, and robustness/legibility measures.
+H2: Morphological Modularity Hypothesis. Introducing morphing ability and richer
+connection conditions at the module level will increase measurable behavioral complexity.
+This is tested by comparing morph-enabled versus morph-disabled modules (or restricted
+primitives), while holding organizational policy families constant, and then validating key
+contrasts in physical prototypes.
+Interventions. Interventions occur at three levels: (1) Design-level interventions (morph
+primitives, connection rules), (2) Organization-level interventions (role diﬀerentiation, topology), and (3) Human-level interventions (MR input channel and timing). The evaluation
+
+Chapter 4. Methodology
+
+29
+
+framework is structured to detect not only improved complexity but also the trade-oﬀ space
+among complexity, robustness, and legibility.
+
+5
+
+Experiments and Results
+
+Content below is the placeholder.
+
+30
+
+6
+
+Discussion and Contributions
+
+Content below is the placeholder.
+
+31
+
+7
+
+Conclusion and Future Work
+
+Content below is the placeholder.
+
+32
+
+Bibliography
+[1] Lucienne T.M. Blessing and Amaresh Chakrabarti. DRM, a Design Research Methodology. Springer, London, 2009. ISBN 978-1-84882-586-4 978-1-84882-587-1. doi: 10.1007/
+978-1-84882-587-1. URL http://link.springer.com/10.1007/978-1-84882-587-1.
+[2] Scott Camazine, Jean-Louis Deneubourg, Nigel R. Franks, James Sneyd, Guy Theraulaz,
+and Eric Bonabeau. Self-Organization in Biological Systems, volume 38. Princeton
+University Press, 2001. ISBN 978-0-691-11624-2. doi: 10.2307/j.ctvzxx9tx. URL https:
+//www.jstor.org/stable/j.ctvzxx9tx.
+[3] Melanie Mitchell. Complexity: a guided tour. Oxford University Press, New York, NY,
+1. iss. as an paperback edition, 2011. ISBN 978-0-19-512441-5 978-0-19-979810-0.
+[4] James Ladyman, James Lambert, and Karoline Wiesner. What is a complex system?
+European Journal for Philosophy of Science, 3, June 2013. doi: 10.1007/
+s13194-012-0056-8.
+[5] Mikhail Prokopenko, Fabio Boschetti, and Alex Ryan. An Information-Theoretic Primer
+on Complexity, Self-Organisation and Emergence. Complexity, 15, January 2006.
+[6] J. de Haan. How emergence arises. Ecological Complexity, 3(4):293–301, December 2006. ISSN 1476-945X. doi: 10.1016/j.ecocom.2007.02.003. URL https://www.
+sciencedirect.com/science/article/pii/S1476945X07000049.
+[7] Rolf Pfeifer and Josh Bongard. How the body shapes the way we think: a new view of
+intelligence. MIT Press, Cambridge, Massachusetts, 2007. ISBN 978-0-262-16239-5.
+[8] Rolf Pfeifer, Fumiya Iida, and Josh Bongard. New Robotics: Design Principles
+for Intelligent Systems. Artiﬁcial life, 11:99–120, December 2005. doi: 10.1162/
+1064546053279017.
+[9] Mostafa Mousa, Alberto Comoretto, Johannes T.B. Overvelde, and Antonio E. Forte.
+Multifunctional Fluidic Units for Emergent, Responsive Robotic Behaviors. Advanced
+33
+
+Bibliography
+
+34
+
+Materials, n/a(n/a):e10298. ISSN 1521-4095. doi: 10.1002/adma.202510298. URL
+https://onlinelibrary.wiley.com/doi/abs/10.1002/adma.202510298.
+_eprint:
+https://advanced.onlinelibrary.wiley.com/doi/pdf/10.1002/adma.202510298.
+[10] Hossein Ahmadzadeh and Ellips Masehian. Modular robotic systems: Methods and
+algorithms for abstraction, planning, control, and synchronization. Artiﬁcial Intelligence, 223:27–64, June 2015. ISSN 0004-3702. doi: 10.1016/j.artint.2015.02.004. URL
+https://www.sciencedirect.com/science/article/pii/S0004370215000260.
+[11] John (John William) Romanishin. M-Blocks : three dimensional modular selfreconﬁgurable robots. Thesis, Massachusetts Institute of Technology, 2018. URL
+https://dspace.mit.edu/handle/1721.1/119098. Accepted: 2018-11-15T16:36:28Z
+Journal Abbreviation: Three dimensional modular self-reconﬁgurable robots.
+[12] Michael Rubenstein, Alejandro Cornejo, and Radhika Nagpal. Programmable selfassembly in a thousand-robot swarm. Science, 345(6198):795–799, August 2014. doi:
+10.1126/science.1254295.
+URL https://www.science.org/doi/10.1126/science.
+1254295. Publisher: American Association for the Advancement of Science.
+[13] Ludovico Cademartiri and Kyle J. M. Bishop. Programmable self-assembly. Nature
+Materials, 14(1):2–9, January 2015. ISSN 1476-4660. doi: 10.1038/nmat4184. URL
+https://www.nature.com/articles/nmat4184. Publisher: Nature Publishing Group.
+[14] Pranav Rajbhandari and Donald Sofge. Learning NEAT Emergent Behaviors in Robot
+Swarms. In 2024 IEEE International Conference on Robotics and Biomimetics (ROBIO), pages 414–419, December 2024. doi: 10.1109/ROBIO64047.2024.10907512. URL
+http://arxiv.org/abs/2309.14663. arXiv:2309.14663 [cs].
+[15] Indirect Swarm Control: Characterization and Analysis of Emergent Swarm Behaviors.
+URL https://arxiv.org/html/2309.11408v2.
+[16] Thomas Sheridan. Human-Robot Interaction: Status and Challenges. Human factors,
+58, April 2016. doi: 10.1177/0018720816644364.
+[17] Phillip Walker, Michael Lewis, and Katia Sycara. Characterizing human perception of
+emergent swarm behaviors. In 2016 IEEE International Conference on Systems, Man,
+and Cybernetics (SMC), pages 002436–002441, Budapest, Hungary, October 2016. IEEE.
+ISBN 978-1-5090-1897-0. doi: 10.1109/SMC.2016.7844604. URL http://ieeexplore.
+ieee.org/document/7844604/.
+
+Bibliography
+
+35
+
+[18] Connor Mattson and Daniel S. Brown. Leveraging Human Feedback to Evolve and
+Discover Novel Emergent Behaviors in Robot Swarms. In Proceedings of the Genetic and
+Evolutionary Computation Conference, GECCO ’23, pages 56–64, New York, NY, USA,
+July 2023. Association for Computing Machinery. ISBN 979-8-4007-0119-1. doi: 10.
+1145/3583131.3590443. URL https://dl.acm.org/doi/10.1145/3583131.3590443.
+[19] Jing Wang, Gao Wang, Huaicheng Chen, Yanping Liu, Peilong Wang, Daming Yuan,
+Xingyu Ma, Xiangyu Xu, Zhengdong Cheng, Baohua Ji, Mingcheng Yang, Jianwei Shuai,
+Fangfu Ye, Jin Wang, Yang Jiao, and Liyu Liu. Robo-Matter towards reconﬁgurable
+multifunctional smart materials. Nature Communications, 15(1):8853, October 2024.
+ISSN 2041-1723. doi: 10.1038/s41467-024-53123-6. URL https://www.nature.com/
+articles/s41467-024-53123-6. Publisher: Nature Publishing Group.
+
+A
+
+Additional Materials
+
+Add supplementary ﬁgures, tables, protocols, etc.
+
+36
+
+

@@ -1,0 +1,56 @@
+% =============================================================
+% Chapter 1 — Introduction
+% Sections 1.1 and 1.2 (full rewrite, condensed)
+% =============================================================
+
+% -------------------------------------------------------------
+% 1.1 Dialectic Debating of Related Concepts
+% -------------------------------------------------------------
+
+\section{Dialectic Debating of Related Concepts \\
+{\normalsize\itshape Analysis of Contradictions in the Context of Computation}}
+\label{sec:dialectics}
+
+To situate this research, I begin not with a singular definition but with a series of tensions---pairs of concepts that appear contradictory yet are in fact mutually constitutive. Rather than resolving these oppositions, this thesis treats them as \textit{productive dialectics}: dynamic relationships that generate new forms of thinking, designing, and computing. Each pair below names a long-standing distinction in the history of computation and design, and each, on closer inspection, is destabilized by contemporary practice. Read together, they map the conceptual terrain on which this thesis is situated.
+
+\subsection{Dialectic Concept Pairs}
+
+\sidebyside {Natural vs. Artificial}{
+Everything originates from nature, yet human intelligence introduces a recursive rupture: the capacity to produce \textit{artifacts}. Antoni Gaudí's claim that ``straight lines belong to men, curves to God'' captures the historical asymmetry---artificial systems favor abstraction and regularity, while natural systems embody continuous variation and emergence. Yet this boundary is increasingly unstable. Bio-inspired design, synthetic biology, and soft robotics suggest that artificial systems can \textit{grow, adapt, and behave} like natural ones. The artificial, in this sense, becomes a \textit{second-order nature}---a designed ecology of behaviors and materials.
+}
+
+\sidebyside {Analog vs. Digital}{
+Before digital computation, machines computed through continuous physical processes---voltages, rotations, fluid flows. Lord Kelvin's tide-predicting machine (1872) is emblematic: a system of pulleys and gears that mechanically summed harmonic constituents of tidal motion. The machine did not represent the tide symbolically; it \textit{was} the tide, in miniature. Digital computation replaced this material immediacy with discrete symbols (0/1), gaining scalability, precision, and programmability---but at the cost of separating computation from physics. Recent work on physical computing and morphological computation argues for reclaiming what this abstraction set aside: that material itself can do computational work \citep{pfeifer2007body}.
+}
+
+\sidebyside {Predictable vs. Unpredictable}{
+Digital signals are discrete and explicit; their predictability supports proofs, verification, and engineering trust. Physical systems are rarely so well-behaved---a balloon does not inflate to the same shape twice; friction varies with humidity; nominally identical components behave differently when actuated. Classical control treats this variability as \textit{noise} to be rejected. An older lineage---Turing's reaction--diffusion patterns, ant colony foraging, the foraging traces of \textit{Physarum polycephalum}---treats it as a generative \textit{resource}. Unpredictability, in this view, is not a defect to be suppressed but the substrate from which adaptive behavior arises.
+}
+
+\sidebyside {Bottom-up vs. Top-down}{
+A top-down system specifies global behavior and decomposes it into local commands; a bottom-up system specifies only local rules and allows global behavior to emerge. Cellular automata, swarm intelligence, and self-assembling matter \citep{cademartiri2015programmable, rubenstein2014programmable} belong to the second tradition. Each approach excels in its own domain: top-down for verifiability and goal-directed precision, bottom-up for robustness and scalability. The most consequential design problems lie where neither alone suffices---where the body is too compliant to be fully commanded, yet the task too goal-directed to be left entirely to emergence.
+}
+
+\sidebyside {Soft vs. Rigid}{
+Rigid bodies are predictable, classically modeled, and naturally amenable to top-down control---they are the foundation of industrial robotics. Soft bodies trade predictability for \textit{compliance}: they conform to objects, absorb shocks, redistribute load passively, and continuously reshape under stress. As \citet{rus2015design} note, soft robots offer ``unprecedented adaptation, sensitivity, and agility,'' but realizing this potential demands a different conception of computation. A soft gripper may grasp an irregular object using nothing but its own deformation---the body performing what a controller would otherwise compute. The soft/rigid divide is therefore not merely a material choice but a question of \textit{where intelligence resides}: in the controller, in the body, or in the dialogue between them.
+}
+
+
+% -------------------------------------------------------------
+% 1.2 Synthesis: From Dialectics to Design Space
+% -------------------------------------------------------------
+
+\section{Synthesis: From Dialectics to Design Space}
+\label{sec:synthesis}
+
+The five pairs above are not independent axes; they cluster. The natural, the analog, the unpredictable, the bottom-up, and the soft share a common posture: behavior \textit{arises from} a substrate. The artificial, the digital, the predictable, the top-down, and the rigid share the opposite posture: behavior is \textit{imposed upon} a substrate---specified, encoded, executed. Most contemporary robotics has been engineered within the second cluster and has been remarkably successful within it. Yet a growing body of work---soft robotics \citep{rus2015design}, morphological computation \citep{pfeifer2007body, pfeifer2005new}, modular self-reconfigurable systems \citep{yim2007modular, romanishin2013m}, programmable matter \citep{cademartiri2015programmable}, and particle robots \citep{li2019particle}---argues that the next class of robotic capabilities will require taking the first cluster seriously again, not as a return to pre-industrial craft but as a deliberate design strategy.
+
+The interesting questions, in other words, no longer lie at either pole. They lie in the \textit{negotiation} between them: where does the controller end and the body begin? How much behavior should be specified, and how much allowed to emerge? When is unpredictability a liability, and when the very mechanism that makes adaptation possible? Such questions cannot be answered in the abstract; they must be worked out against a concrete system, with concrete affordances and concrete constraints.
+
+\subsection{The Problem Space}
+
+A productive way to make these questions concrete is to identify a class of systems in which all five dialectics actively interact. \textit{Reconfigurable inflatable modular robots} are such a class. They are \textit{artificial} in construction yet behave through \textit{natural} processes---air pressure, membrane elasticity, contact between deforming neighbors. Their command surface is \textit{digital} (valves open or close) yet their motion is \textit{analog}, governed by continuous deformations that resist symbolic description. They are amenable to \textit{top-down} valve sequencing, yet their actual locomotion arises \textit{bottom-up} from the interaction of inflated neighbors, gravity, and ground contact. They are \textit{soft} in their actuating surfaces and \textit{rigid} only in their topological skeleton---the discrete graph of which module connects to which.
+
+Three properties make this class particularly suited to examining the dialectics above. \textit{Modularity} introduces a discrete combinatorial structure---a finite set of unit types and legal connections, an enumerable design space \citep{yim2007modular}. \textit{Inflation} as the actuation primitive ensures that, at runtime, behavior is dominated by continuous, materially mediated processes; the actuator does not command a joint angle but supplies a pressure that membrane and neighbors negotiate together. \textit{Reconfigurability} keeps the design space open rather than fixed, placing the work at the intersection of design and control: changing the configuration changes both what the robot can do and how it must be controlled to do it.
+
+Together, these properties define a problem space in which configuration, material, and control cannot be cleanly separated. A choice in one domain---the topology of the assembly, the geometry of a single inflatable unit, the rule that decides when a module inflates---propagates immediately into the others. Existing research on inflatable rolling robots \citep{wait2010self}, isoperimetric soft structures \citep{usevitch2020untethered}, modular auxetic robots \citep{chin2022auxbots}, and high-DOF spherical soft robots \citep{nozaki2018mochibot} each address fragments of this space. None, however, asks how a \textit{shared geometric language} can place modular inflatable robots on equal footing for systematic comparison---nor how minimal that language can be while still supporting controllable motion. It is this gap that the present thesis seeks to occupy. The remainder of this chapter formalizes the inquiry: \autoref{sec:rq} states the research questions and hypotheses arising from this problem space, and \autoref{sec:method} outlines the methods and experimental work through which they are pursued.

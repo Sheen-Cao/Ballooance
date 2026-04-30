@@ -1,0 +1,49 @@
+\section{Module Design}
+\label{sec:module-design}
+
+A balloon module is the basic unit of the robot. Each module consists of a latex balloon, a 3D-printed holder plate that mounts to the central polyhedral skeleton, an air inlet that connects the balloon's interior to the pneumatic system, and a clamping ring that secures the balloon's neck to the holder plate (\textit{\cref{fig:module_assembly}}). The central skeleton itself is one of the four cospherical polyhedra introduced in \cref{sec:cospherical-framework}, with one mounting socket per vertex. Modules are interchangeable across configurations: the same module can be transferred from a tetrahedral skeleton to an octahedral one without modification, since the cospherical constraint keeps the mounting interface identical across topologies.
+
+\figcap
+{figures/iteration_plate}
+{Module components and joint architecture.}
+{Left: V-1 with snap ring and rotational joint. Right: V-3 with cap ring and spherical joint.}
+{fig:module_assembly}
+{\linewidth}
+
+The central skeleton, the mounting sockets, and the module spacings are generated through a parametric Grasshopper definition (\textit{\cref{fig:parametric_workflow}}). A single radius parameter $R$ drives the cospherical sphere size; for each polyhedron (tetrahedron, bipyramid, octahedron, cube), the corresponding vertex coordinates and edge lengths are computed from $R$ and used to lay out the central skeleton and the module mounting points. Changing $R$ rescales all four configurations simultaneously; switching the polyhedron changes the topology while reusing the same module geometry. This parametric workflow allowed dimensional sweeps of the holder plate, central skeleton, and balloon attachment to be tested across all four configurations from a single CAD definition, rather than re-modelling each variant by hand.
+
+\figcap
+{figures/parametric_workflow}
+{Parametric Grasshopper workflow.}
+{All four cospherical configurations are generated from a single radius parameter $R$, allowing simultaneous resizing and topology switching.}
+{fig:parametric_workflow}
+{\linewidth}
+
+The current design is the result of three iterations driven by problems that surfaced during early prototyping. \cref{fig:module_versions} shows the three versions, V-1 through V-3, side by side; the differences look small, but each addresses a specific failure mode encountered in physical tests.
+
+\figcap
+{figures/iteration_module}
+{Three iterations of the balloon module.}
+{V-1: snap ring, 75\,mm plate. V-2: cap ring, 75\,mm plate. V-3: cap ring, 53\,mm plate, spherical joint.}
+{fig:module_versions}
+{\linewidth}
+
+The first version, V-1, used a \textit{snap ring} to hold the balloon's neck against the holder plate (\textit{\cref{fig:module_inflated}}). Two problems emerged. Air leaked at the snap interface because the snap teeth produced a discontinuous contact line rather than a continuous compressive seal. In addition, the sharp edges introduced by 3D-printed snap geometry frequently nicked or tore the latex during installation, compromising the balloon's lifetime well before any locomotion test had a chance to load it. The second version, V-2, replaced the snap ring with a \textit{cap ring} that drops over the balloon neck and presses it down against the holder plate's outer rim (\textit{\cref{fig:cap_ring_iteration}}). The cap ring's contact face is filleted on both edges, so the geometry that compresses the latex is smooth rather than edged, and the seal becomes continuous around the full circumference. The combination eliminates both the leakage and the cutting problems of V-1, at the cost of one additional part per module.
+
+\figcap
+{figures/iteration_balloon}
+{Cap-ring evolution from V-1 to V-2.}
+{Snap-ring (top) compared with filleted cap-ring (bottom).}
+{fig:cap_ring_iteration}
+{0.85\linewidth}
+
+\figcap
+{figures/scale_comparison}
+{V-1 prototype at scale.}
+{An assembled V-1 robot (left) and a single fully-inflated balloon (right).}
+{fig:module_inflated}
+{\linewidth}
+
+The third version, V-3, makes two further changes. First, the holder plate diameter is reduced from 75\,mm to 53\,mm. When the plate is large relative to the inflated balloon, it acts as a wide, almost-stable supporting disc that resists tipping; a smaller plate gives the inflated balloon enough overhang relative to its support surface to actually contribute a tipping moment when neighbouring balloons inflate. Second, the joint between the module and the central skeleton is changed from a \textit{rotational joint}, with a single rotational degree of freedom around the skeleton-to-plate axis, to a \textit{spherical joint}, with three rotational degrees of freedom. The spherical joint gives the module enough orientational freedom to accommodate the irregular contact forces that arise when adjacent balloons inflate against one another, without snapping or pinching. It also introduces a small but useful element of mechanical compliance into the skeleton itself, so the body's overall response to inflation is not perfectly rigid but partially yielding, which contributes to the locomotion behaviour reported in \cref{ch:results}.
+
+Across the three iterations, the lesson is that the dominant failure modes are at the seams: air leaking at the balloon neck, latex tearing at sharp print edges, and modules binding when adjacent balloons collide. Each iteration removed one of these without changing the underlying cospherical framework or the actuator topology. The module that emerges is small, replaceable, and uniform across configurations, which is what the comparative methodology of this thesis requires.

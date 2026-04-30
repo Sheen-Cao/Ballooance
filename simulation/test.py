@@ -57,13 +57,18 @@ def run_test():
     model = mujoco.MjModel.from_xml_path(MODEL_PATH)
     data  = mujoco.MjData(model)
 
-    # 获取 8 个气球 geom 的 ID
+    # 获取 8 个气球 geom 和 expand 关节的 ID（用于读取真实 qpos）
     balloon_geom_ids = [
         mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, f"balloon_{i}_geom")
         for i in range(8)
     ]
+    expand_joint_ids = [
+        mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, f"expand_{i}")
+        for i in range(8)
+    ]
+    qpos_addrs = [model.jnt_qposadr[jid] for jid in expand_joint_ids]
 
-    # 每个气球的当前 d 值（从 deflated 状态开始）
+    # 命令侧的"目标"气球量（仅用于驱动 ctrl，不直接驱动 geom）
     balloon_d     = [D_MIN] * 8
     balloon_state = [HOLD]  * 8
 
@@ -102,7 +107,9 @@ def run_test():
                 balloon_state  = list(new_states)
                 print(f"t={sim_time:.1f}s | 切换到阶段 {sequence_idx}")
 
-            # ── 更新每个气球的 d 值 → 同步更新尺寸和位置 ────────
+            # ── 更新命令端 balloon_d，并 ramp 写到 ctrl ──────────
+            #   balloon_d 是"目标气量"，ctrl 跟随它移动。
+            #   geom_size 不再这里改 —— 改完 mj_step 后再读真实 qpos
             for i in range(8):
                 if balloon_state[i] == INFLATE:
                     balloon_d[i] = min(D_MAX, balloon_d[i] + INFLATE_RATE * dt)
@@ -110,19 +117,18 @@ def run_test():
                     balloon_d[i] = max(D_MIN, balloon_d[i] - INFLATE_RATE * dt)
                 # HOLD：不变
 
-                d = balloon_d[i]
-
-                # 更新球半径（geom size）
-                model.geom_size[balloon_geom_ids[i], 0] = d_to_R(d)
-
-                # 更新伸出位移（actuator ctrl）
-                data.ctrl[i] = d - D_MIN
-
-            # geom_size 更新后通知碰撞系统重新计算（防止穿地）
-            mujoco.mj_forward(model, data)
+                # ctrl 是 slide joint 目标位移（[0, 0.058]）
+                data.ctrl[i] = balloon_d[i] - D_MIN
 
             # ── 推进仿真 ─────────────────────────────────────────
             mujoco.mj_step(model, data)
+
+            # ── 关键修复：用真实 qpos 同步 geom_size ──────────────
+            #   如果 slide joint 被地面/邻球顶住没动，geom 也不会鼓出来
+            for i in range(8):
+                actual_d = data.qpos[qpos_addrs[i]] + D_MIN
+                model.geom_size[balloon_geom_ids[i], 0] = d_to_R(actual_d)
+
             viewer.sync()
 
             # ── 定时打印状态 ─────────────────────────────────────

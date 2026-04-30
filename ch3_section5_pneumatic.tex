@@ -1,0 +1,47 @@
+\section{Pneumatic Actuation System}
+\label{sec:pneumatic-system}
+
+The pneumatic actuation system gives each balloon module its own dedicated pump and valve, so that any module can be independently inflated, deflated, or held at its current volume without affecting the others. With eight modules in the largest configuration (the cube), the system comprises eight pumps, eight valves, and a pair of microcontrollers responsible for driving them.
+
+\subsection{Three-state Control: Inflate, Deflate, Hold}
+\label{subsec:three-state-control}
+
+Each module is driven by a three-state command vocabulary: \textit{Inflate} (I), \textit{Deflate} (D), and \textit{Hold} (H). The states are realised through a combination of pump and three-way valve. The valve has two positions: in its de-energised position, the pump's output is routed to the balloon; in its energised position, the balloon's interior is routed to the atmosphere. Combining the valve position with the pump's on/off state produces the three behaviours.
+
+\begin{itemize}
+  \item \textbf{Inflate (I)}: valve de-energised, pump on. Air flows from the pump into the balloon.
+  \item \textbf{Deflate (D)}: valve energised, pump off. The balloon vents passively to the atmosphere through the valve's exhaust path.
+  \item \textbf{Hold (H)}: valve de-energised, pump off. Both flow paths are closed; the balloon is sealed at its current volume.
+\end{itemize}
+
+Deflation is passive rather than actively pumped, so deflate rates are determined by balloon elasticity and exhaust port size rather than by controllable suction. This is a deliberate simplification; an active vacuum scheme would require an additional pump and reservoir per channel and was deemed unnecessary for the locomotion behaviours studied here.
+
+\subsection{Hardware Architecture}
+\label{subsec:pneumatic-hardware}
+
+The driving electronics consist of two Arduino Uno microcontrollers, two L293D motor driver shields stacked on the Unos to drive the eight DC pumps, and one Adafruit eight-channel solenoid driver board to drive the eight valves over I\textsuperscript{2}C (\textit{\cref{fig:motor_solenoids_driver}}). Each L293D shield supports up to four motor channels; with eight pumps to drive, two Unos are required. Pumps 0 to 3 are connected to the first Uno; pumps 4 to 7 are connected to the second Uno. The solenoid driver, which controls all eight valves, is attached to the first Uno over its I\textsuperscript{2}C bus.
+
+\figcap
+{figures/motor_solenoids_driver}
+{Driver electronics.}
+{Left: L293D motor shield, used to drive the DC pumps. Right: Adafruit eight-channel solenoid driver, used to drive the valves over I\textsuperscript{2}C.}
+{fig:motor_solenoids_driver}
+{\linewidth}
+
+The first Uno is designated the \textit{master}: it receives commands from the host computer over USB serial, decodes them into per-balloon state assignments, applies the pump and valve commands for pumps 0 to 3 and valves 0 to 7 directly, and forwards the pump commands for pumps 4 to 7 to the second Uno (the \textit{slave}) over a software serial link. The slave's only responsibility is to drive its four pumps in response to messages from the master. The full layout is shown in \cref{fig:pneumatic_control}.
+
+\figcap
+{figures/pneumatic_control}
+{Full pneumatic actuation system.}
+{Left and right: an Arduino Uno with L293D shield, each driving four pumps (eight pumps in total). Middle: the eight three-way valves with the Adafruit solenoid driver. The host computer connects to the master Uno on the lower right; the master and slave Unos communicate over a software serial link.}
+{fig:pneumatic_control}
+{\linewidth}
+
+The host-facing command interface supports three modes that together make the same hardware adaptable to all four cospherical configurations. A configuration command (\texttt{set\,N}) sets how many balloons are active so that unused channels are held during smaller configurations such as the tetrahedron; a full-string command (e.g.\ \texttt{IIHD}) sets all active balloons at once; and a selective command (e.g.\ \texttt{02-D 3-I}) updates only the listed balloons while leaving the others in their current state. The full microcontroller firmware is provided in \cref{app:firmware}.
+
+\subsection{Tethered Operation and the Off-board Trade-off}
+\label{subsec:tethered-tradeoff}
+
+The pneumatic system in its current form is \textit{tethered}: pumps, valves, microcontrollers, and power supply all sit off the robot, connected to it through a bundle of pneumatic tubes (one per module). The robot itself carries only the balloons, the central skeleton, and the inlet tubing.
+
+This is a deliberate scope choice. An on-board variant is mechanically possible, but eight DC pumps together with a battery sufficient to drive them would add several hundred grams of mass and several centimetres of bounding diameter to the robot, both of which would change the very property under study. With tethered operation, the only thing that changes between configurations is the geometric arrangement of the balloons; the actuation mass stays off the robot and out of the experimental variable. Once the locomotion question has been answered for the tethered case, on-board integration becomes a follow-on engineering problem rather than a methodological one for this thesis.

@@ -1,0 +1,6 @@
+{
+  "_comment": "zotero_root and vector_db_path are required. references_bib is optional but recommended (lets the skill use your existing BBT citekeys).",
+  "zotero_root": "C:/Users/Sheen/Zotero",
+  "references_bib": "D:/Share/CMU/Thesis/Ballooance/references.bib",
+  "vector_db_path": "D:/Share/CMU/Thesis/Ballooance/working/zotero-rag-skill/data/chroma"
+}

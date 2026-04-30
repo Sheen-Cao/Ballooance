@@ -1,0 +1,12 @@
+\section{Method and Experiments}
+\label{sec:method}
+
+The methodology of this thesis is design-led: each step begins with a geometric or material claim about what the robot should be, and uses prototyping---both physical and simulated---to test that claim. Three threads run in parallel.
+
+The first is a \textit{geometric design framework} based on cospherical polyhedral primitives. Inflatable modules are placed at the vertices of polyhedra inscribed in a sphere of uniform radius, so that different configurations---tetrahedron, bipyramid, octahedron, and cube---share one geometric language and can be compared on equal terms. This framework operationalizes the design space implied by SubQ1.
+
+The second is \textit{physical prototyping}. Several rounds of prototypes have been built and tested across selected configurations, establishing a baseline for how each topology moves---or fails to move---under inflation, and yielding a symmetry-grounded \textit{pairing strategy} that reduces actuator count without sacrificing gait reachability. Systematic comparison across configurations, under shared metrics for motion capacity and actuation complexity, is in progress.
+
+The third is \textit{simulation and preliminary control trials}. A MuJoCo-based digital model supports rapid iteration and policy benchmarking. Pilot trials of bottom-up, locally responsive rules---modeled on cellular-automaton state machines---have been run on the cubic configuration; their formalization and comparison against a top-down baseline form the core of the control-side work addressing SubQ2.
+
+Importantly, simulation in this thesis is not intended as a high-fidelity surrogate for the physical robot. Rigid-body simulation cannot capture the passive material coupling between inflated neighbors, and the gap between simulated and real behavior is itself part of the evidence: it measures the contribution of the body's compliance to motion, supporting the morphological-computation argument advanced in Section~\ref{sec:dialectics}. Detailed protocols, metrics, and experimental design are taken up in the chapters that follow.

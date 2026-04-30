@@ -1,0 +1,596 @@
+% =============================================================
+%  Chapter 2 — Background Review : SKELETON / SCAFFOLD
+%  Status: collaborative outline, not draft prose.
+%  Each section lists: Role / POV — Key arguments — References
+%  from the project .bib — Consensus candidates worth adding —
+%  Watch-fors. References use BibTeX keys from references.bib.
+% =============================================================
+
+\chapter{Background Review}
+\label{ch:background}
+
+% -------------------------------------------------------------
+%  Chapter introduction
+% -------------------------------------------------------------
+\section*{Chapter Introduction}
+\label{sec:ch2-intro}
+
+\textbf{Role.} Tell the reader what the chapter does and how it
+maps to the dialectics of Chapter~1.
+
+\textbf{POV.} Three converging literatures — emergence, embodiment,
+existing soft/modular systems — define the conceptual neighborhood
+for the thesis. Each section narrows scope; \S2.3 closes with the
+gap statement that motivates Chapter~3.
+
+\textbf{Points to make (5--7 sentences).}
+\begin{itemize}
+    \item Map: \S2.1 picks up \emph{Bottom-up vs.\ Top-down}; \S2.2
+          picks up \emph{Soft vs.\ Rigid}; \S2.3 surveys robots that
+          sit somewhere in those tensions.
+    \item Briefly acknowledge the early second-order cybernetics
+          and HRI thread (\cite{glanvilleSECONDORDERCYBERNETICS},
+          \cite{sheridanHumanRobotInteractionStatus2016}) as
+          intellectual scaffolding now reserved for the reflection
+          chapter, not the experimental work.
+    \item Signal the chapter arc: \emph{control paradigm} $\rightarrow$
+          \emph{embodiment principle} $\rightarrow$ \emph{existing systems}
+          $\rightarrow$ \emph{gap}.
+\end{itemize}
+
+% =============================================================
+\section{The Elegance of Emergence}
+\label{sec:elegance-emergence}
+% =============================================================
+
+\textbf{Role.} Establish the bottom-up control paradigm — that
+complex global behaviour can arise from simple local rules — as
+a precise computational practice, not a metaphor. Grounds the
+\emph{Bottom-up vs.\ Top-down} dialectic from \S1.1 and motivates
+the CA-based control direction taken later in the thesis.
+
+\textbf{POV.} Emergence is interesting to roboticists not because it
+is mysterious but because it is \emph{cheap} — global behaviour for
+free, given the right substrate and rule set. The chapter takes
+this engineering posture, not a philosophical one.
+
+% -----------------------------------------
+\subsection{Defining emergence: a precise relationship, not a metaphor}
+\label{subsec:defining-emergence}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Emergence is a \emph{relational} property of a system: the
+          global state cannot be obtained by a compositional sum of
+          agent states, even though it is fully determined by them.
+    \item Distinguish emergence from non-linearity in the colloquial
+          sense; reach instead for an information-theoretic reading.
+    \item Brief tour of the language: self-organization, complexity,
+          computational irreducibility.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{prokopenkoInformationTheoreticPrimerComplexity2006},
+\cite{dehaanHowEmergenceArises2006},
+\cite{ladymanWhatComplexSystem2013},
+\cite{mitchellComplexityGuidedTour2011},
+\cite{bonabeauNaturalArtiCial1999}.
+
+\textbf{Consensus candidates worth adding.} None essential — your
+bib is strong here. Anderson 1972 ``More is different'' is the
+classic foundational citation if you want the canonical opener.
+
+% -----------------------------------------
+\subsection{Computational practices that operationalize emergence}
+\label{subsec:computational-practices}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item \textbf{Cellular automata} as the cleanest demonstration:
+          discrete lattice + local update rule $\rightarrow$ global
+          pattern; minimal substrate showing how much complexity
+          local rules can support.
+    \item \textbf{Self-organization in biology and physics} — Turing
+          morphogenesis, ant colony optimization, swarm intelligence
+          — same logic, different substrate.
+    \item \textbf{Engineered swarms and programmable matter} —
+          emergence moves from simulation into hardware.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+Swarms / engineered emergence: \cite{rubensteinProgrammableSelfassemblyThousandrobot2014},
+\cite{liParticleRoboticsBased2019},
+\cite{cademartiriProgrammableSelfassembly2015},
+\cite{bonabeauNaturalArtiCial1999},
+\cite{camazineSelfOrganizationBiologicalSystems2001}.
+
+Behaviour discovery / characterization in swarms:
+\cite{mattsonDiscoveryDeploymentEmergent2025},
+\cite{mattsonLeveragingHumanFeedback2023},
+\cite{rajbhandariLearningNEATEmergent2024},
+\cite{walkerCharacterizingHumanPerception2016},
+\cite{IndirectSwarmControl}.
+
+\textbf{Consensus candidates worth adding.}
+\begin{itemize}
+    \item \emph{Werfel et al.\ 2014, Science} --- termite-inspired
+          construction swarms; addresses the inverse problem
+          (specify the structure, synthesize the rules) that the
+          thesis implicitly inverts back. Foundational and frequently
+          cited.
+    \item \emph{Carrillo-Zapata et al.\ 2018, Science Robotics} ---
+          ``Morphogenesis in robot swarms''; closes the loop between
+          biological self-organization and physical robot collectives.
+    \item \emph{Bojinov et al.\ 2000, ICRA} --- ``Emergent structures
+          in modular self-reconfigurable robots''; pre-dates
+          \cite{kubicaComplexBehaviorsLocal2001} which you already
+          cite, useful as the historical anchor.
+\end{itemize}
+
+% -----------------------------------------
+\subsection{From rule sets to embodied substrates}
+\label{subsec:rules-to-embodied}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item \emph{Where emergence has stalled in robotics:} most
+          demonstrations operate on rigid agents whose only coupling
+          to one another is informational (radio, sensing). The
+          mechanical and material coupling between bodies is left out.
+    \item \emph{What we want next:} emergence operating on physically
+          coupled bodies, where ``communication'' between modules is
+          partly mechanical and material, not only signalled.
+    \item \emph{Bridging work that already exists} — voxel-based
+          soft robot CAs, modular soft robots controlled by
+          NCA-like distributed rules — but it is still nascent.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{romanishinMBlocksThreeDimensional2018},
+\cite{wangRoboMatterReconfigurableMultifunctional2024},
+\cite{eguchiFluidicSwarmEmbodimentSwarm2025},
+\cite{mousaMultifunctionalFluidicUnits},
+\cite{chattyEmergentComplexBehaviors2011},
+\cite{kubicaComplexBehaviorsLocal2001},
+\cite{zhangBioInspiredDistributedNeural}.
+
+\textbf{Consensus candidates worth adding.}
+\begin{itemize}
+    \item \emph{Cheney et al.\ 2016} --- ``Topological evolution for
+          embodied cellular automata''; the title alone earns it the
+          slot, and it argues the same body+CA framing you use.
+    \item \emph{Nadizar et al.\ 2022} --- ``Collective control of
+          modular soft robots via embodied Spiking NCA''; cleanest
+          modern bridge between CAs and soft modular bodies.
+    \item \emph{Oliveri et al.\ 2021, PNAS} --- ``Continuous learning
+          of emergent behavior in robotic matter''; physical-coupling-
+          driven learning without communication. Strong support for
+          the ``mechanical coupling as a substrate for emergence''
+          claim.
+\end{itemize}
+
+\textbf{Closing transition.} Emergence shows that complex
+behaviour need not be specified from the top. But every example
+above treats agents as mechanically independent units exchanging
+information. The next section examines a related but distinct claim:
+that even within a single body, intelligence can be distributed
+across material and form rather than concentrated in a controller.
+
+\textbf{Watch out for.}
+\begin{itemize}
+    \item Don't get pulled into Wolfram metaphysics.
+    \item Don't promise more than the experiments deliver — the
+          thesis pilots CA-style control, it does not prove emergence
+          at scale.
+\end{itemize}
+
+% =============================================================
+\section{Matter Does Matter}
+\label{sec:matter-does-matter}
+% =============================================================
+
+\textbf{Role.} Establish embodiment / morphological computation
+as the second conceptual pillar — the body is a computational
+participant, not a passive platform. Grounds the
+\emph{Soft vs.\ Rigid} dialectic from \S1.1 and the
+configuration-as-computation argument central to the thesis.
+
+\textbf{POV.} The interesting design move is not ``soft instead of
+rigid'' but \emph{which computation we choose to do in matter and
+which we leave to a controller}.
+
+% -----------------------------------------
+\subsection{The classical separation of body and controller}
+\label{subsec:classical-separation}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Industrial robotics treats the body as a precise mechanical
+          platform. The controller specifies torques; the body executes.
+    \item This separation has been productive but it makes any
+          computation done by the body \emph{invisible}, and treats
+          compliance, friction, and material variability as noise to
+          be rejected.
+    \item Re-thinking this is a precondition for taking soft and
+          modular bodies seriously as design objects.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{rusDesignFabricationControl2015} (as the canonical statement
+of the soft-robotics counterposition).
+
+% -----------------------------------------
+\subsection{Morphological computation: the body as participant}
+\label{subsec:morph-comp}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Pfeifer \& colleagues' framing: a well-designed body
+          \emph{offloads} computation that a controller would
+          otherwise have to specify.
+    \item Three exemplars to anchor the principle: passive dynamic
+          walking; the universal soft / jamming gripper; physical
+          reservoir computing in compliant bodies.
+    \item Acknowledge the careful critique: not every offload is
+          ``computation proper'' --- much is morphology that
+          \emph{facilitates} control or perception. Draw the
+          distinction carefully so the thesis claim is the right
+          shape.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{pfeiferHowBodyShapes2007},
+\cite{pfeiferNewRoboticsDesign2005},
+\cite{mullerWhatMorphologicalComputation2017},
+\cite{wangEmbodyingPhysicalComputing2026},
+\cite{aguilarReviewLocomotionRobophysics2016}.
+
+\textbf{Consensus candidates worth adding.}
+\begin{itemize}
+    \item \emph{Hauser et al.\ 2023, IEEE Control Systems} ---
+          ``Leveraging Morphological Computation for Controlling
+          Soft Robots''. Translates the principle into a control-
+          design vocabulary; useful framing if you want a control-
+          aware reader to follow you.
+    \item \emph{Hauser et al.\ 2024, Device} --- ``Morphological
+          computation: past, present and future''. Recent (2024)
+          short survey; good for an up-to-date anchor.
+    \item \emph{Laschi et al.\ 2016, IEEE RAM} --- ``Lessons from
+          animals and plants: the symbiosis of morphological
+          computation and soft robotics''. Directly bridges the two
+          literatures you are joining.
+    \item \emph{Müller \& Hoffmann 2017} (you already have it) is the
+          critical/cautious counterweight --- cite it precisely so
+          you signal you are aware of the boundary between
+          \emph{computation proper} and \emph{morphology that aids
+          control}.
+\end{itemize}
+
+% -----------------------------------------
+\subsection{Morphing matter and programmable self-assembly}
+\label{subsec:morph-matter}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item A constructive sibling to morphological computation: matter
+          itself can be designed to change form in response to stimuli
+          or assembly rules.
+    \item This pushes the design question from ``what compliance \emph{is}
+          available?'' to ``what compliance do we \emph{author}?''
+    \item Useful as bridging vocabulary: your inflatable modules are
+          themselves a form of programmable matter at vertex scale.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{tibbitsThingsFallTogether2021},
+\cite{cademartiriProgrammableSelfassembly2015},
+\cite{wangRoboMatterReconfigurableMultifunctional2024},
+\cite{adminNewProgrammableMaterials2022},
+\cite{schaffner3DPrintingRobotic2018},
+\cite{pattersonMethod3DPrinting2023}.
+
+% -----------------------------------------
+\subsection{Implication: the design question changes}
+\label{subsec:design-question-changes}
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Reframe: instead of ``what controller do we need?'', ask
+          ``what body would shrink the controller's task?''
+    \item This reframe is the conceptual lens this thesis adopts.
+    \item Important caveat: most demonstrations of morphological
+          computation are on \emph{single-body, monolithic} systems.
+          The question of how morphological computation operates in
+          \emph{modular} bodies, where modules are coupled through
+          their material, has received much less attention.
+\end{itemize}
+
+\textbf{Closing transition.} The principle of matter-as-computation
+is well established in monolithic soft systems and compliant
+single-body machines. What kinds of robots, then, instantiate this
+principle in \emph{modular} form --- where the body is composed
+of comparable units, and the configuration of those units is itself
+a design variable? Two robotic traditions have approached this
+question from opposite sides; \S2.3 reads each in turn, then
+identifies the region they leave open.
+
+\textbf{Watch out for.}
+\begin{itemize}
+    \item Risk of overlap with \S2.3. Keep this section
+          \emph{conceptual}; save specific comparable systems
+          (Wait, Chin, Nozaki, Usevitch, Yu) for the next section.
+    \item If you borrow Tibbits' \emph{Robot without Robot} framing
+          for \S2.3's title, cite him here once explicitly.
+\end{itemize}
+
+% =============================================================
+\section{Robot Unlike Robot}
+\label{sec:robot-unlike-robot}
+% =============================================================
+
+\textbf{Role.} \emph{Position} the thesis against existing robotic
+systems. This is where the literature has to deliver the gap.
+Title borrowed from Tibbits --- cite \cite{tibbitsThingsFallTogether2021}
+in the section's first paragraph.
+
+\textbf{POV.} Two strong but lopsided traditions: soft robotics
+takes matter seriously and comparability lightly; modular
+reconfigurable robotics does the inverse. The interesting
+position is the one neither has fully claimed.
+
+% -----------------------------------------
+\subsection{Soft robotics --- compliance without comparability}
+\label{subsec:soft-robotics}
+
+\textbf{POV / closing point.} These systems show what compliance
+\emph{can do}. They do not provide a way to compare configurations
+under shared geometric constraints, because there \emph{are no
+shared structural primitives} across designs.
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Soft robotics' design language is largely \emph{monolithic} ---
+          a single continuous body whose behaviour is hard to compare
+          across designs.
+    \item Pneumatic / inflatable variants are the closest cousin of
+          this thesis at the level of actuation, but stay within the
+          monolithic frame.
+    \item Authoring tools and fabrication methods (3D printing,
+          inflatables-by-design) define the practical possibility
+          space.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+Foundational review: \cite{rusDesignFabricationControl2015}.
+Pneumatic/inflatable single bodies:
+\cite{waitSelfLocomotionSpherical2010},
+\cite{usevitchUntetheredIsoperimetricSoft2020},
+\cite{kimSimpleTripodMobile2019},
+\cite{boothSurfaceActuationSensing2021}.
+Fluidic / self-synchronizing units:
+\cite{mousaMultifunctionalFluidicUnits},
+\cite{eguchiFluidicSwarmEmbodimentSwarm2025}.
+Inflatable design / fabrication:
+\cite{yang_snapinflatables_2024},
+\cite{wangPneuFabDesigningLowCost2023a},
+\cite{ouTEI2016Studio2016},
+\cite{schaffner3DPrintingRobotic2018},
+\cite{pattersonMethod3DPrinting2023}.
+
+\textbf{Consensus candidates worth adding (optional).}
+\begin{itemize}
+    \item \emph{Shepherd et al.\ 2011, PNAS} --- ``Multigait soft robot.''
+          The 1971-citation foundational pneumatic soft-robot paper.
+          Even a passing cite signals you've placed yourself in the
+          lineage.
+    \item \emph{Hauser et al.\ 2023} (already suggested for \S2.2) ---
+          alternatively could land here as ``soft + control.''
+\end{itemize}
+
+% -----------------------------------------
+\subsection{Modular reconfigurable robotics --- comparability without compliance}
+\label{subsec:mrr}
+
+\textbf{POV / closing point.} These systems show what comparable
+design spaces look like, and how powerfully they can be reasoned
+about. They block exactly the passive material coupling that makes
+soft systems interesting in the first place.
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item MRR offers exactly what soft robotics lacks --- comparable
+          units, design spaces that can be enumerated and studied,
+          policy frameworks that generalize across designs.
+    \item But almost all MRR is \emph{rigid}; reconfigurability lives
+          in mechanical re-attachment or joint angles, not in the
+          body's material behaviour.
+    \item Recent learning-based work (modular RL, GAN-driven design
+          search) has only deepened this rigid commitment because
+          differentiable / RL pipelines presume well-modelled bodies.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+Reviews: \cite{ahmadzadehModularRoboticSystems2015},
+\cite{liangModularReconfigurableRobots2026}.
+Canonical rigid modular systems:
+\cite{romanishinMBlocksThreeDimensional2018},
+\cite{rubensteinProgrammableSelfassemblyThousandrobot2014},
+\cite{tuFreeSNFreeformStrutnode2022},
+\cite{yiReconfigurableRobotControl2023},
+\cite{yiImprovingRobotCapabilities},
+\cite{chinFunctionFollowsForm2023}.
+Learning-based modular design:
+\cite{whitmanLearningModularRobot2023},
+\cite{huModularRobotDesign2022},
+\cite{38942241ModularMobile},
+\cite{AgileLeggedLocomotion}.
+Distributed / bio-inspired modular control:
+\cite{zhangBioInspiredDistributedNeural}.
+
+\textbf{Consensus candidates worth adding.} None essential. Yim 2007
+(modular self-reconfigurable robots review) is conventionally cited
+here and isn't in your bib --- \emph{add only if your committee
+expects the canonical Yim citation}; \cite{ahmadzadehModularRoboticSystems2015}
+already covers the review function.
+
+% -----------------------------------------
+\subsection{At the boundary --- soft \emph{and} modular \emph{and} reconfigurable}
+\label{subsec:boundary}
+
+\textbf{POV.} A handful of systems sit at or near the intersection.
+Each pays a different price; none asks the question this thesis
+asks.
+
+\textbf{Key arguments.}
+\begin{itemize}
+    \item Polyhedral-geometry-as-design-primitive is rare; closest
+          neighbours are Mochibot (rigid, max-DOF) and tensegrity
+          icosahedra (cabled, not modular in the swappable-unit sense).
+    \item Particle robots are soft-edged and collective but their
+          ``configuration'' is dynamic and emergent, not designed.
+    \item Volume-changing modular systems --- AuxBots, electrohydraulic
+          modules --- are reconfigurable and modular but rigid.
+    \item The closest soft + modular systems with \emph{vertex-style}
+          modular geometry are very recent and not yet positioned as
+          a comparable design family.
+\end{itemize}
+
+\textbf{References (from your .bib).}
+\cite{nozakiContinuousShapeChanging2018} (Mochibot),
+\cite{chinFlipperStyleLocomotionStrong2023} (AuxBots),
+\cite{liParticleRoboticsBased2019} (particle robots),
+\cite{wangRoboMatterReconfigurableMultifunctional2024},
+\cite{younPneuBotsModularInflatables2022} (PneuBots --- soft modular
+inflatable, the nearest sibling in your bib),
+\cite{yoderHexagonalElectrohydraulicModules2024},
+\cite{boothSurfaceActuationSensing2021} (tensegrity skin),
+\cite{tibbitsThingsFallTogether2021} (programmable matter framing),
+\cite{suzukiShapeBotsShapechangingSwarm2019}.
+
+\textbf{Consensus candidates worth adding (IMPORTANT).}
+\begin{itemize}
+    \item \textbf{Wharton et al.\ 2023, IEEE RA-L --- Tetraflex /
+          Polyflex.} A \emph{tetrahedral pneumatic-bellows soft truss
+          robot} that rolls, crawls, and bounds. This is a direct
+          neighbour of your tetra/octa/cube comparison and is not in
+          your bib. Strongly recommend adding --- it is either the
+          nearest competitor or a missing comparator depending on
+          how you frame the gap. Worth a paragraph of its own.
+    \item \emph{Wang et al.\ 2022, T-MECH} --- ``Tetrahedral
+          Soft-Legged Robot for Multigait Locomotion.'' Less directly
+          comparable (legged not vertex-modular) but uses the
+          tetrahedron framing.
+    \item \emph{Robertson et al.\ 2020, IJRR} --- ``Pneumagami''
+          modular origami pneumatic soft robot. Useful for the
+          ``modular soft pneumatic'' lineage even though it is
+          manipulator-style, not locomotor.
+    \item \emph{Pagliocca et al.\ 2024} --- modular reconfigurable
+          rotary soft pneumatic actuators. Demonstrates modular
+          soft pneumatic units that can recombine.
+\end{itemize}
+
+\textbf{Comparison table (anchor of this subsection).} Lead with the
+table, let the prose support it.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+System & Modular? & Soft? & Topological comparison? & Locomotion via inflation? \\
+\midrule
+Wait et al.\ 2010 & No & Yes (pneumatic) & No & Yes \\
+Usevitch et al.\ 2020 & No & Yes & Single config & Partial \\
+Chin et al.\ 2023 (AuxBot) & Yes & No (rigid auxetic) & Limited & No \\
+Nozaki et al.\ 2018 (Mochibot) & No (monolithic) & Partial & No (single shape) & No \\
+Yu et al.\ 2026 (MRR) & Yes & No & Yes (rigid) & No \\
+Li et al.\ 2019 (particles) & Yes (collective) & Partial & Emergent only & No \\
+Wharton et al.\ 2023 (Tetraflex) & Yes (truss) & Yes (bellows) & Single config & Yes \\
+\textbf{This thesis} & \textbf{Yes (vertex modules)} & \textbf{Yes (pneumatic)} & \textbf{Yes (cospherical family)} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\caption{Comparable systems against the thesis along four axes.}
+\label{tab:comparison}
+\end{table}
+
+% -----------------------------------------
+\subsection{The gap}
+\label{subsec:gap}
+
+\textbf{POV.} A precise, actionable gap statement that bridges
+to Chapter~3.
+
+\textbf{Synthesis (draft prose, can be promoted to body text).}
+Existing soft robots demonstrate that matter performs computational
+work, but their monolithic form makes it difficult to ask how the
+\emph{arrangement} of compliant elements shapes that work. Existing
+modular robots demonstrate that arrangement can be studied as a
+design variable, but their rigid construction blocks the passive
+material coupling that makes the question of arrangement interesting
+in the first place. Between these two traditions lies a thinly
+populated region: systems that are simultaneously soft, modular, and
+reconfigurable, in which both compliance and configuration can be
+varied and compared on shared terms.
+
+It is in this region that this thesis is sited. The chapters that
+follow develop a geometric design framework --- the \emph{cospherical
+polyhedral primitive} --- that operationalizes this region, allowing
+different topological configurations of identical inflatable modules
+to be designed, fabricated, simulated, and tested under one
+comparative language.
+
+\textbf{Closing transition (to Ch.\ 3).} What this region requires
+is a design framework that holds compliance and configuration
+together --- that lets the geometric arrangement of soft modules be
+specified and varied without losing comparability across designs.
+Such a framework is the subject of the next chapter.
+
+% =============================================================
+\section*{Cross-section reminders}
+\label{sec:reminders}
+% =============================================================
+
+\begin{itemize}
+    \item \textbf{No double-citing the same paper for the same argument
+          across sections.} Pfeifer \& Bongard 2007 belongs in \S2.2;
+          if it appears in \S2.1 or \S2.3, it should be carrying a
+          different argument.
+    \item \textbf{Length budget:} \S2.1 $\approx$ 3--4 pages, \S2.2 $\approx$
+          3--4 pages, \S2.3 $\approx$ 5--7 pages (longest, since it
+          delivers the gap). Total chapter $\approx$ 12--15 pages.
+    \item \textbf{Transition discipline:} every section ends by naming
+          what the next section addresses; the chapter as a whole
+          ends by naming what Ch.~3 does.
+    \item \textbf{Dialectic callbacks (per your preference):} each
+          section opener names the dialectic from \S1.1 it picks up.
+\end{itemize}
+
+% =============================================================
+\section*{Open questions for us to settle before drafting}
+\label{sec:open-questions}
+% =============================================================
+
+\begin{enumerate}
+    \item \textbf{Tetraflex.} Add Wharton et al.\ 2023 to the bib?
+          If yes: position as nearest competitor (it is a tetrahedral
+          soft pneumatic truss --- the very configuration you found
+          to fail) or as ``proves the boundary is being approached
+          from another angle''?
+    \item \textbf{Foundational classics.} Do you want Anderson 1972,
+          Reynolds 1987, Wolfram 2002, McGeer 1990 in the bib? Your
+          current set works without them; adding them costs little
+          but expands the bibliography.
+    \item \textbf{Yim 2007 modular review.} Conventionally cited in
+          MRR sections; not in your bib. Your committee's expectation
+          here?
+    \item \textbf{Hauser 2023 / 2024 morphological computation
+          updates.} Add to \S2.2 or skip? Recent surveys would
+          modernize the section without much rewrite.
+    \item \textbf{Cybernetics thread.} \cite{glanvilleSECONDORDERCYBERNETICS}
+          and \cite{sheridanHumanRobotInteractionStatus2016} are in the
+          bib but probably belong in the reflection chapter, not here.
+          Confirm we just acknowledge in the chapter intro?
+    \item \textbf{Comparison table placement.} Currently in
+          \S\ref{subsec:boundary}. Could move to \S\ref{subsec:gap}
+          or to a chapter-opener visual. Your call.
+\end{enumerate}

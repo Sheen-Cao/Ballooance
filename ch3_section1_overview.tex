@@ -1,0 +1,11 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+\section{Overview}
+\label{sec:method-overview}
+
+The previous chapter ended with a research site that no existing system fully occupies: soft, modular, pneumatic robots in which geometric configuration is treated as a controlled variable, and in which control coordinates passively-coupled inflated modules through local rules. To work in this site as a design problem rather than a wishlist, this chapter develops a methodology that pairs a geometric design framework with iterative physical and simulated prototyping, then evaluates the resulting robots through a small set of comparative metrics.
+
+The approach is design-led. Each step begins with a geometric or material claim about what the robot should be, and uses prototyping to test that claim. Three threads run in parallel and inform one another. The first is a \textit{cospherical polyhedral framework} (\cref{sec:cospherical-framework}) that defines the comparable design space, namely a family of robots built from identical inflatable modules placed at the vertices of polyhedra inscribed in a sphere of uniform radius. The second is \textit{physical prototyping} of the modules and the pneumatic system that instantiate this framework (\cref{sec:module-design}, \cref{sec:pneumatic-system}). The third is \textit{simulation} (\cref{sec:simulation-strategy}), used not as a high-fidelity surrogate for the physical robot but as a design-space filter and a control-policy benchmark. Three further sections specify the control approach (\cref{sec:control-approach}), the evaluation methods (\cref{sec:evaluation-methods}), and the experimental setup (\cref{sec:experimental-setup}) under which different configurations are physically tested.
+
+A note on scope. The methodology is comparative rather than optimal. Its purpose is to study how different topological arrangements of identical compliant modules shape what the robot can do, not to find the single best configuration for a given task. Where existing systems pick one geometry and develop it in depth, this work picks several geometries and develops a framework for comparing them on equal terms. The chapters that follow report what such comparison reveals.

@@ -31,11 +31,14 @@
 
   <!-- ============================================================
        [物理参数 1] 全局仿真设置
-         timestep  : 每步时间（秒），越小越精确但越慢，推荐 0.001~0.005
-         gravity   : 重力加速度 (x, y, z)，标准 -9.81
-         iterations: 接触求解迭代次数，越大越稳定
+         timestep  : 0.0005s — 接触刚度提高后需要更小步长保持稳定
+         iterations: 500 — 多接触体（8 球互压 + 地面）需要更多迭代
+         cone      : elliptic — 椭圆摩擦锥，球-平面接触下比金字塔更不易抖
+         jacobian  : dense — 模型很小，dense 比稀疏的还快
   ============================================================ -->
-  <option timestep="0.001" gravity="0 0 -9.81" iterations="200" solver="Newton"/>
+  <option timestep="0.0005" gravity="0 0 -9.81" iterations="500"
+          solver="Newton" cone="elliptic" jacobian="dense"
+          impratio="3"/>
 
   <visual>
     <headlight ambient="0.3 0.3 0.3" diffuse="0.6 0.6 0.6"/>
@@ -68,14 +71,15 @@
                      solref="0.05 1" → 慢速恢复（软接触，减少抖动）
   ============================================================ -->
   <default>
+    <!-- 接触参数：硬而过阻尼，杜绝穿模又不反弹
+         solimp="0.99 0.999 0.001" → 容差 1mm（之前 0.1mm 过紧，触发墙式冲击）
+         solref="0.005 2"          → 时间常数 5ms，zeta=2（过阻尼，吸收能量不反弹）
+         friction="3.0 ..."        → 远超橡胶 µ≈1.5；6.0 会触发数值抖动 -->
     <geom condim="6"
-          friction="6.0 0.3 0.1"
-          solimp="0.98 0.999 0.0001"
-          solref="0.005 1"/>
-    <!-- [物理参数 5] ball joint 默认属性
-         stiffness : 关节弹性，越大越能把气球推力传递给core
-                     0 = 完全软（力消散），100~500 = 合理传递范围 -->
-    <joint damping="1.0" stiffness="200"/>
+          friction="3.0 0.05 0.05"
+          solimp="0.99 0.999 0.001 0.5 2"
+          solref="0.005 2"/>
+    <joint damping="3.0" stiffness="0"/>
   </default>
 
   <worldbody>
@@ -86,30 +90,38 @@
            所以地面和气球的 friction 都要同步调高才有效
     ============================================================ -->
     <geom name="floor" type="plane" size="2 2 0.1" material="grid_mat"
-          friction="5.0 0.2 0.1"/>
+          friction="3.0 0.05 0.05"
+          solimp="0.99 0.999 0.001 0.5 2"
+          solref="0.005 2"/>
+
+    <!-- 跟踪相机：env.render() 调用 camera="track_core" 需要这个 -->
+    <camera name="track_core" mode="trackcom" pos="0 -0.6 0.35"
+            xyaxes="1 0 0 0 0.5 0.866"/>
 
     <!-- ============================================================
          [物理参数 4] Core 质量
-           mass : 中心结构的质量（kg），影响翻滚难度
-                  现实中估计约 0.1~0.5 kg，越轻越容易被气球推动
+           mass : 中心结构的质量（kg）
+         初始 z 提高到 0.13 给底部气球留充气空间，避免初始就贴地
     ============================================================ -->
-    <body name="core" pos="0 0 0.07">
+    <body name="core" pos="0 0 0.13">
       <freejoint name="root"/>
       <geom name="core_geom" type="box" size="0.026 0.026 0.026"
             mass="0.2" material="core_mat"/>
       <site name="core_site" size="0.003"/>
 
+      <!-- ============================================================
+           Plates 都用 ball joint 模拟 spherical snap fit：
+             range     = 0.5 rad (~28°)，限制摆幅，模拟卡扣
+             stiffness = 3.0，被推开后弹回中位
+             damping   = 0.3，抑制振荡
+           气球被挤压时 plate 方向会顺势偏转，而不是硬顶住 core
+      ============================================================ -->
       <!-- ============ BALLOON 0 : corner (+,+,+)  outward = ( 1, 1, 1)/√3 ============ -->
       <body name="plate_0" pos="0.026 0.026 0.026">
-        <joint name="joint_0" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_0" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_0_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
-        <!-- ============================================================
-             [物理参数 5] 气球伸出关节阻尼
-               damping : 滑动关节的阻尼，越大气球伸出/收缩越"粘滞"
-                         推荐范围 0.2 ~ 2.0
-        ============================================================ -->
         <body name="balloon_0" pos="0.01155 0.01155 0.01155">
-          <joint name="expand_0" type="slide" axis="0.5774 0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_0" type="slide" axis="0.5774 0.5774 0.5774" range="0 0.058"/>
           <!-- ============================================================
                [物理参数 6] 气球初始尺寸（运行时由 Python 动态更新）
                  size : 初始球半径（m），Python 会在每步覆盖此值
@@ -123,70 +135,70 @@
 
       <!-- ============ BALLOON 1 : corner (+,+,-)  outward = ( 1, 1,-1)/√3 ============ -->
       <body name="plate_1" pos="0.026 0.026 -0.026">
-        <joint name="joint_1" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_1" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_1_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_1" pos="0.01155 0.01155 -0.01155">
-          <joint name="expand_1" type="slide" axis="0.5774 0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_1" type="slide" axis="0.5774 0.5774 -0.5774" range="0 0.058"/>
           <geom name="balloon_1_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 2 : corner (+,-,+)  outward = ( 1,-1, 1)/√3 ============ -->
       <body name="plate_2" pos="0.026 -0.026 0.026">
-        <joint name="joint_2" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_2" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_2_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_2" pos="0.01155 -0.01155 0.01155">
-          <joint name="expand_2" type="slide" axis="0.5774 -0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_2" type="slide" axis="0.5774 -0.5774 0.5774" range="0 0.058"/>
           <geom name="balloon_2_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 3 : corner (+,-,-)  outward = ( 1,-1,-1)/√3 ============ -->
       <body name="plate_3" pos="0.026 -0.026 -0.026">
-        <joint name="joint_3" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_3" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_3_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_3" pos="0.01155 -0.01155 -0.01155">
-          <joint name="expand_3" type="slide" axis="0.5774 -0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_3" type="slide" axis="0.5774 -0.5774 -0.5774" range="0 0.058"/>
           <geom name="balloon_3_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 4 : corner (-,+,+)  outward = (-1, 1, 1)/√3 ============ -->
       <body name="plate_4" pos="-0.026 0.026 0.026">
-        <joint name="joint_4" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_4" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_4_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_4" pos="-0.01155 0.01155 0.01155">
-          <joint name="expand_4" type="slide" axis="-0.5774 0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_4" type="slide" axis="-0.5774 0.5774 0.5774" range="0 0.058"/>
           <geom name="balloon_4_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 5 : corner (-,+,-)  outward = (-1, 1,-1)/√3 ============ -->
       <body name="plate_5" pos="-0.026 0.026 -0.026">
-        <joint name="joint_5" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_5" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_5_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_5" pos="-0.01155 0.01155 -0.01155">
-          <joint name="expand_5" type="slide" axis="-0.5774 0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_5" type="slide" axis="-0.5774 0.5774 -0.5774" range="0 0.058"/>
           <geom name="balloon_5_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 6 : corner (-,-,+)  outward = (-1,-1, 1)/√3 ============ -->
       <body name="plate_6" pos="-0.026 -0.026 0.026">
-        <joint name="joint_6" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_6" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_6_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_6" pos="-0.01155 -0.01155 0.01155">
-          <joint name="expand_6" type="slide" axis="-0.5774 -0.5774 0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_6" type="slide" axis="-0.5774 -0.5774 0.5774" range="0 0.058"/>
           <geom name="balloon_6_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
 
       <!-- ============ BALLOON 7 : corner (-,-,-)  outward = (-1,-1,-1)/√3 ============ -->
       <body name="plate_7" pos="-0.026 -0.026 -0.026">
-        <joint name="joint_7" type="ball" range="0 0.52" damping="0.2"/>
+        <joint name="snap_7" type="ball" range="0 0.5" damping="0.3" stiffness="3.0"/>
         <geom name="plate_7_geom" type="sphere" size="0.008" mass="0.015" material="plate_mat"/>
         <body name="balloon_7" pos="-0.01155 -0.01155 -0.01155">
-          <joint name="expand_7" type="slide" axis="-0.5774 -0.5774 -0.5774" range="0 0.058" damping="0.8" stiffness="0"/>
+          <joint name="expand_7" type="slide" axis="-0.5774 -0.5774 -0.5774" range="0 0.058"/>
           <geom name="balloon_7_geom" type="sphere" size="0.029" mass="0.04" material="balloon_mat"/>
         </body>
       </body>
@@ -196,27 +208,30 @@
 
   <!-- ============================================================
        [物理参数 8] 执行器刚度
-         kp : position 控制的比例增益
-              越大气球伸出/收缩越快越硬，推荐范围 20 ~ 200
-              注意：kp 只控制关节位移速度，气球尺寸变化速度
-              由 test.py 里的 INFLATE_SECONDS 控制
+         kp=25：原值 80 会让 actuator 直接顶穿地面 / 邻球
+         过冲振荡由 slide joint 的 damping=3.0（在 default 里）抑制
+         接触刚度 (solref=5ms, zeta=2) 远高于 actuator，能正常顶住
   ============================================================ -->
   <actuator>
-    <position name="act_0" joint="expand_0" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_1" joint="expand_1" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_2" joint="expand_2" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_3" joint="expand_3" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_4" joint="expand_4" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_5" joint="expand_5" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_6" joint="expand_6" kp="80" gear="1" ctrlrange="0 0.058"/>
-    <position name="act_7" joint="expand_7" kp="80" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_0" joint="expand_0" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_1" joint="expand_1" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_2" joint="expand_2" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_3" joint="expand_3" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_4" joint="expand_4" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_5" joint="expand_5" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_6" joint="expand_6" kp="25" gear="1" ctrlrange="0 0.058"/>
+    <position name="act_7" joint="expand_7" kp="25" gear="1" ctrlrange="0 0.058"/>
   </actuator>
 
   <sensor>
+    <!-- 全局轨迹（ground truth，用于 sim-real 比较的"真值"轨迹） -->
     <framepos    name="core_pos"    objtype="body" objname="core"/>
     <framelinvel name="core_vel"    objtype="body" objname="core"/>
     <frameangvel name="core_angvel" objtype="body" objname="core"/>
     <framequat   name="core_quat"   objtype="body" objname="core"/>
+    <!-- IMU sensors (装在 core_site)：与实物 IMU 同源信号 -->
+    <accelerometer name="imu_accel" site="core_site"/>
+    <gyro          name="imu_gyro"  site="core_site"/>
   </sensor>
 
 </mujoco>

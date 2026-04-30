@@ -1,0 +1,32 @@
+\section{Material and Inflation Behavior}
+\label{sec:material-inflation}
+
+Before running the locomotion experiments, several rounds of inflation and deflation tests were carried out on individual balloons and small assemblies. The intent was not to test a hypothesis but to characterise the physical behaviour of the system. The tests surfaced four material-level properties that shape both the simulation strategy and the control approach used later in the chapter.
+
+\subsection{Maximum Inflation Scale and Non-linear Rate}
+\label{subsec:inflation-scale}
+
+A single balloon mounted on a holder plate has a finite maximum inflated diameter. As the pump continues to feed air past this point, the balloon's internal pressure rises but its observable volume changes very little, because the latex has reached a regime in which further radial expansion requires disproportionately more force. In practice this gives each module an effective volumetric ceiling, beyond which additional pumping serves only to maintain pressure.
+
+The rate at which a balloon approaches this ceiling is strongly non-linear. In the early stages of inflation, when the balloon is still small, the volume increases rapidly and visibly with each pump cycle. As the balloon enlarges, the same pump output yields progressively smaller volumetric changes, and the rate of expansion tapers off as the balloon nears its ceiling. The rigid-body simulator (\cref{sec:simulation-strategy}) renders inflation as a slide-joint extension at constant rate, which is a clean approximation that lets us test geometric questions but does not capture the strain-stiffening behaviour observed physically.
+
+\subsection{Asymmetric Inflation and Deflation Timing}
+\label{subsec:inflation-timing}
+
+Inflation and deflation are not symmetric processes. A typical balloon takes roughly 40\,seconds to reach its maximum inflated state from rest. Deflation, which is passive (the balloon vents through its valve to the atmosphere with no active suction), is governed instead by the elastic recoil of the latex and by the geometry of the exhaust path. Deflation is also non-linear in time: a freshly maximally-inflated balloon contracts quickly in the first few seconds as the high internal pressure forces air out, then slows as the pressure approaches atmospheric. The robot's effective cycle time is therefore dominated by inflation, not by deflation.
+
+\subsection{Connected Balloons and Path of Least Resistance}
+\label{subsec:shared-circuit}
+
+When several balloons share a common pneumatic source, air follows the path of least resistance. A latex balloon's stretch resistance is not uniform across modules: small differences in fabrication, in cumulative skin fatigue from previous inflation cycles, or in localised softening of the rubber are enough to leave one balloon slightly easier to expand than its neighbours. Once inflation begins, that softer balloon absorbs most of the inflow while the other balloons remain close to their initial state. The result is an uneven and not very repeatable distribution of volumes across the modules in the assembly.
+
+The practical implication for design is direct: comparable inflation across modules cannot be achieved through a shared circuit. Each balloon needs its own dedicated pneumatic channel. This is the reason the system described in \cref{sec:pneumatic-system} pairs every balloon with its own pump and its own three-way valve, rather than splitting a single pump's output through a manifold.
+
+\subsection{Implications for Simulation and Control}
+\label{subsec:material-implications}
+
+Three implications follow for the rest of the thesis. First, the rigid-body simulator captures the geometric consequences of inflation but does not model strain-stiffening, asymmetric timing, or shared-circuit priority. The gap between simulation and physical behaviour is therefore not a uniform error; it concentrates wherever these material effects matter, which is exactly where the thesis's morphological-computation argument expects the evidence to surface. Future iterations of the simulator could incorporate non-linear inflation curves and shared-pressure dynamics to narrow this gap, although the present rigid-body approximation is sufficient for the geometric and timing questions addressed here.
+
+Second, the present pneumatic design (per-module dedicated pump and valve, \cref{sec:pneumatic-system}) was chosen partly to remove the shared-circuit imbalance from the experimental variables, so that locomotion experiments can compare configurations under matched inflation timing. The path-of-least-resistance behaviour is therefore present at the material level but neutralised at the system level for the comparative experiments that follow.
+
+Third, the long inflation time (roughly 40\,seconds to maximum) sets a natural lower bound on experimental cycle time and shapes how the control rules in \cref{sec:control-approach} are sequenced. The locomotion experiments operate within this timing constraint, with each inflation or deflation step lasting on the order of tens of seconds rather than the hundreds of milliseconds typical of rigid-body actuated robots. This is partly a constraint and partly a feature: the slow timescale gives the body time to settle into each pose before the next is commanded, which makes individual gait cycles more interpretable than they would be at a faster timescale.

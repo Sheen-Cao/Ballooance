@@ -1,0 +1,28 @@
+\section{Summary}
+\label{sec:ch2-summary}
+
+The four sections of this chapter mapped the literatures relevant to a reconfigurable inflatable modular robot, level by level, and identified what each layer of the literature leaves open. Their gaps cluster, and the thesis sits in that cluster. Table~\ref{tab:ch2-gaps} summarizes the gap identified in each section.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Gap summary across Chapter~\ref{ch:background}.}
+\label{tab:ch2-gaps}
+\begin{tabular}{@{}l p{0.62\linewidth}@{}}
+\toprule
+\textbf{Section} & \textbf{Gap identified} \\
+\midrule
+\S\ref{sec:soft-robotics} \quad Soft + pneumatic & Compliant material can absorb control work, but existing demonstrations are monolithic single bodies; comparison across designs is qualitative at best. \\
+\addlinespace
+\S\ref{sec:shape-changing} \quad Morphological computation & Each shape-changing robot picks one geometric primitive and develops it in depth; no systematic comparison across geometries. \\
+\addlinespace
+\S\ref{sec:modularity} \quad Modular reconfigurable & Most MRR remains rigid and motor-driven; the soft + modular + pneumatic intersection is thinly populated, and even within it geometric configuration is rarely treated as a controlled variable. \\
+\addlinespace
+\S\ref{sec:emergence} \quad Emergence & Emergent control is well-established for rigid agents coupled informationally; its application to materially-coupled modular bodies in three-dimensional polyhedral configurations is open. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three commitments define the research site this thesis occupies. First, that soft material and pneumatic actuation, productive for monolithic bodies as established in \S\ref{sec:soft-robotics}, can be extended into a modular form and contribute to the still-emerging soft-modular tradition surveyed in \S\ref{sec:modularity}. Second, that the geometric configuration of those modules is itself a design variable worth studying systematically across a family of related designs, addressing the comparative gap left by \S\ref{sec:shape-changing}. Third, that the controller need not specify global behavior explicitly, but can adopt local-rule approaches from the emergence paradigm of \S\ref{sec:emergence} to test whether coordinated locomotion can arise in materially-coupled modular bodies. The robot studied here is built from identical inflatable modules placed at the vertices of cospherical polyhedra, pneumatically actuated through valve coordination, and controlled through cellular-automaton-style local rules per module.
+
+Within the MRR taxonomy of Liang and colleagues, this work operates at Level 1, the gait-locomotion regime in which the body's configuration is decided at assembly and held fixed during a single locomotion attempt. The focus is therefore on how different topological arrangements of identical compliant modules shape what the assembled robot can do, rather than on in-motion reconfiguration. Higher-level capabilities such as flow morphing, in-motion re-attachment, and self-reconfiguration in unstructured environments, while a long-horizon ambition for the field, fall outside the immediate scope of this thesis. The next chapter introduces the methodology that operationalizes this site: the cospherical polyhedral framework that defines the comparable design space, the pneumatic actuation scheme that drives module inflation, and the experimental setup through which different configurations are physically prototyped and compared.

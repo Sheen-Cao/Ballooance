@@ -1,0 +1,68 @@
+\section{Configuration Test}
+\label{sec:configuration-test}
+
+This section reports the configuration-comparison experiments. Each of the four cospherical configurations introduced in \cref{sec:cospherical-framework} was instrumented with the pneumatic actuation system of \cref{sec:pneumatic-system} and tested manually for two capabilities: the ability to \textit{tip over} from one resting face onto an adjacent face, and the ability to maintain a \textit{continuous gait} over multiple cycles.
+
+Manual operation here means that the experimenter sends serial commands to the master Arduino directly through the three command modes described in \cref{sec:control-approach}, observes the robot's response, and decides the next command. There is no automated controller at this stage; the goal is to characterise what each configuration is mechanically capable of, and to identify which configurations warrant the more controlled experiments that follow.
+
+\subsection{Single-Balloon Tip-Over Baseline}
+\label{subsec:single-balloon-tip}
+
+Before any multi-balloon experiment, a single inflatable module mounted on a small base was used as a sanity check. The pump was held active until the balloon reached its maximum inflated diameter, and the assembly tipped over reliably from its base orientation onto its inflated side. This confirmed that a single balloon at the design's inflated scale generates enough lateral overhang to shift the assembly's centre of mass past its base of support. Tip-over is therefore in principle achievable for any configuration in which an inflated balloon's overhang exceeds the configuration's stability margin.
+
+\subsection{Tetrahedron: Lower-Bound Failure}
+\label{subsec:tetra-test}
+
+The tetrahedral configuration was tested first. With the standard balloon size used elsewhere in this thesis, the tetrahedron does not tip over even at maximum inflation. The geometry has too few vertices and too wide a base of support relative to the overhang any single balloon can produce; the assembly's centre of mass remains within its base regardless of which balloon inflates.
+
+To confirm that the failure was geometric rather than scale-dependent, the test was repeated with oversized 18-inch balloons. With these, the tetrahedron does tip over: an inflated balloon now produces enough lateral overhang to shift the centre of mass past the base. The configuration becomes mobile in this trivial sense. However, no continuous gait was achievable. As soon as the tetrahedron tipped onto a face that placed a different balloon at the contact point, that newly-grounded balloon (still partly inflated) would expand against the floor and push the entire structure back toward its previous orientation, undoing the tip-over before any forward progress could accumulate.
+
+The tetrahedron therefore acts as a \textit{lower bound} for the cospherical family. Even with oversized actuation, its four-vertex geometry cannot sustain a directional gait, because every tip-over creates a counter-tip from the newly-grounded balloon. Four modules are not enough.
+
+% ----------------------------------------------------------------------
+% \subsection{Trigonal Bipyramid: Critical Regime}
+% \label{subsec:bipyramid-test}
+% [Pending experiment. Expected to reveal whether a five-vertex configuration is sufficient for continuous gait, or whether the lower-bound failure of the tetrahedron persists at one additional vertex.]
+% ----------------------------------------------------------------------
+
+% ----------------------------------------------------------------------
+% \subsection{Octahedron: Marginal Regime}
+% \label{subsec:octa-test}
+% [Pending experiment. Expected to be the marginal regime in which geometry begins to support continuous gait but only with deliberate inflation patterns; the natural ``thesis protagonist'' if these expectations hold.]
+% ----------------------------------------------------------------------
+
+\subsection{Cube: Continuous Gait}
+\label{subsec:cube-test}
+
+The cube, with eight balloons at its vertices, was the first configuration to support a continuous gait under manual operation. Two distinct manual control patterns were tested.
+
+\subsubsection{Free Gait}
+\label{subsubsec:cube-free-gait}
+
+In the first pattern, the experimenter sent unstructured commands using the selective and full-string command modes, choosing inflations and deflations on the fly to keep the robot moving. \cref{fig:recording_1} shows a representative session: over roughly five minutes of manual operation, the cube traverses several body-lengths through a sequence of tip-overs. This is not a controlled gait in the kinematic sense; it is closer to steering a clumsy boat by hand. But it confirms that the cube configuration is mechanically capable of sustained motion, since an unaided human operator can produce one without prior training.
+
+\figcap
+{figures/recording_1}
+{Free gait on the cubic configuration.}
+{Manual operation, full-string and selective commands chosen on the fly. Frames sampled every 10 seconds over roughly five minutes.}
+{fig:recording_1}
+{\linewidth}
+
+\subsubsection{Pairwise Rolling}
+\label{subsubsec:cube-pairwise}
+
+In the second pattern, balloons on the same cube edge were grouped into pairs and commanded together, so that the eight-balloon system was reduced to four pair-channels. Within each tip-over cycle, the pair occupying the leading edge of the desired travel direction was deflated while the pair on the trailing edge was inflated, producing an asymmetric volume distribution that biases the cube to roll forward. A representative command sequence cycles through patterns such as \texttt{HHHHIIDD} and \texttt{HHDDHHII} to step through successive cube edges.
+
+The cube does roll under this pattern, and \cref{fig:recording_2} shows a representative sequence over roughly seven minutes. Two observations are worth recording. First, the rolling direction drifts across multiple cycles: the cube does not maintain a straight line, presumably because the pair-grouping is not perfectly symmetric with respect to the cube's geometry and small asymmetries accumulate over each tip-over. Second, the rolling does not always advance. Occasionally, when a new pair of balloons reached the ground and began to inflate, the freshly-inflating balloons caught on a fold of slack latex from the previous cycle and pushed the cube backward rather than forward. This failure mode was reproducible enough to motivate a deliberate fix: by holding the previous-cycle balloons at a larger residual volume rather than fully deflating them, the residual balloons act as a soft constraint against which the next pair's inflation can push, biasing the next roll forward and reducing the frequency of backward kicks.
+
+\figcap
+{figures/recording_2}
+{Pairwise rolling on the cubic configuration.}
+{Edge-aligned balloon pairs commanded together with patterns such as \texttt{HHHHIIDD} and \texttt{HHDDHHII}. Frames sampled every 15 seconds over roughly eight minutes.}
+{fig:recording_2}
+{\linewidth}
+
+\subsection{Summary}
+\label{subsec:configuration-test-summary}
+
+The four cospherical configurations span a clear spectrum from impossible to redundantly mobile. The tetrahedron is a hard lower bound: its four-vertex geometry provides too little overhang and too much counter-tip resistance for continuous gait, even with oversized balloons. The cube, at the upper end of the family this thesis can drive, supports continuous gait under multiple manual control patterns, with directional drift and occasional backward kicks that indicate the simplest patterns are not optimal but show the configuration is mechanically rich. The intermediate configurations, the trigonal bipyramid and the octahedron, are expected to fall between these endpoints and are the natural focus of subsequent experiments.

@@ -100,11 +100,48 @@ Sim in this project is NOT a precise physics predictor. It plays four distinct r
 3. **Material-free baseline:** Sim captures geometry + rules only; real adds material passive coupling. Gap = material's contribution to locomotion. This gap is *evidence for the emergence/morphological computation argument*, not an error to apologize for.
 4. **Parametric design record:** MJCF model makes the research reproducible; geometry parameters are version-controlled
 
-### MuJoCo Model (built 2026-04-16)
-- Core: cube inscribed in R=45mm sphere, edge L=51.96mm
-- Balloon: trimmed sphere, d from 20mm (deflate) → 78mm (inflate)
-- 8 ball joints + 8 slide joints
-- Env: obs=18-dim, action=MultiDiscrete([3]×8), reward=forward progress + height penalty
+### MuJoCo Model (refined 2026-04-30)
+
+**File locations:**
+- Model: `simulation/models/ballooance.xml`
+- Gym env: `simulation/envs/ballooance_env.py`
+- Manual test: `simulation/test.py`
+- RL training: `simulation/train.py`
+- Interactive control: `simulation/scripts/interactive.py`
+- Command sender: `simulation/scripts/send_command.py`
+
+**Accurate geometry (sourced from Grasshopper):**
+- Core: cube inscribed in R=45mm sphere, edge L=51.96mm, half-size=0.026m, corners at (±0.026, ±0.026, ±0.026)
+- Plate base circle: r=21.10mm (fixed)
+- Balloon trimmed sphere: d from 20mm (deflate, R=29mm) → 78mm (inflate, R=81mm), travel=58mm
+- 8 slide joints along outward corner directions, range [0, 0.058m]
+- Core starting height: z=0.09m
+
+**Balloon state model:**
+- 3 states per balloon: I (inflate), H (hold), D (deflate)
+- Python dynamically updates `model.geom_size` each step: radius = √(r²+d²)
+- Also updates slide joint ctrl: ctrl = d − d_min
+- Inflation rate: controlled by `INFLATE_SECONDS` (currently 60s full travel)
+
+**Interactive control:**
+- Command format: 8-char string, e.g. `HIHHHHHH` (one char per balloon, I/D/H)
+- Two-terminal setup: terminal 1 runs simulation, terminal 2 runs `send_command.py`
+- Also supports real Arduino serial input via `--port COM3 --baud 9600`
+
+**Corner mapping (important for gait design):**
+```
+0:(+,+,+)  1:(+,+,-)  2:(+,-,+)  3:(+,-,-)
+4:(-,+,+)  5:(-,+,-)  6:(-,-,+)  7:(-,-,-)
+Bottom (−z): 1, 3, 5, 7   Top (+z): 0, 2, 4, 6
+```
+
+**Physics parameters (ballooance.xml — labelled [物理参数 1-8]):**
+- timestep=0.001, iterations=200
+- friction=6.0 (sliding), solimp=0.9/0.95, solref=0.02
+- Core mass=0.2kg, balloon mass=0.04kg each
+- Ball joints: **currently REMOVED** (plates rigid) — see issues below
+
+**Env: obs=18-dim, action=MultiDiscrete([3]×8), reward=forward progress + height penalty**
 
 ---
 
@@ -179,6 +216,9 @@ None of the three papers ask: *"which polyhedral topology achieves minimum-compl
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2026-04-16 | Simulation stack: MuJoCo + Python + Gymnasium + SB3 | Speed, RL ecosystem, enough for rigid-body approximation |
+| 2026-04-30 | Ball joints temporarily REMOVED (plates rigid to core) | Ball joint stiffness + low damping = underdamped oscillation; rigid first, re-add later |
+| 2026-04-30 | Balloon size via dynamic `model.geom_size` (not mesh import) | Balloon must remain sphere primitive to support runtime size changes |
+| 2026-04-30 | Two-terminal interactive control via file-based IPC | Simulation stdout floods single terminal; send_command.py writes to .balloon_cmd file |
 | 2026-04-17 | Primary thesis focus: **Configuration Design** (not control policy, not sim-to-real) | Computational design dept expects design frameworks; tetra failure + cube success is the core finding |
 | 2026-04-17 | Choose **marginal/boundary config** (likely octa/6-unit) as thesis protagonist | Cube is trivially controllable; tetra is impossible; marginal regime is where intelligent control matters |
 | 2026-04-17 | Control approach: **bottom-up CA rules** as primary, RL as benchmark | Philosophically consistent with emergence framing; feasible without full RL deployment |
@@ -198,6 +238,11 @@ None of the three papers ask: *"which polyhedral topology achieves minimum-compl
 ---
 
 ## Open Questions / Next Steps
+
+### Urgent (simulation — immediate blockers)
+- [ ] **Fix balloon ground penetration** — bottom balloons sink into floor on inflation; root cause: dynamic geom_size grows faster than contact solver pushes robot up, OR initial contact not established properly. Next step: test with rigid plates (ball joints removed), confirm stable rest pose first
+- [ ] **Verify rolling behaviour** — once stable rest pose confirmed, test `HIHHHHHH` (balloon 1 inflate) produces tip toward −x
+- [ ] **Re-add ball joints** with correct critical damping: damping ≥ 2√(stiffness × mass) ≈ 6.6 for stiffness=100, mass=0.055kg
 
 ### Urgent (needed for experiments)
 - [ ] Test Bipyramid (5-unit) physically — critical for establishing whether lower bound is 4 or 5
@@ -225,3 +270,4 @@ None of the three papers ask: *"which polyhedral topology achieves minimum-compl
 | 2026-04-14 | Set up MEMORY.md. Project at transition point: design done, starting control policy development. |
 | 2026-04-16 | Built MuJoCo simulation: MJCF model, Gymnasium env, PPO training script. Tuned physics params. |
 | 2026-04-17 | Major thesis framing session. Defined RQ, 3 contributions, emergence framing, 4-config comparison arc, control policy direction (CA rules), sim roles, literature positioning (3 papers), abstract draft, metrics. Key shift: sim-real gap reframed as evidence for material computation argument. |
+| 2026-04-30 | Simulation refinement session. Accurate geometry from GH, dynamic geom_size inflation, interactive serial control, physics tuning. Current blocker: balloon penetrating ground. Ball joints removed pending stable contact resolution. |

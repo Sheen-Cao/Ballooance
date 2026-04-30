@@ -1,0 +1,30 @@
+\section{Toward Reconfigurable Morphological Systems —— Research Questions and Hypothesis}
+\label{sec:rqs}
+
+\subsection{From Problem Space to Research Object}
+
+The two clusters described in Section~\ref{sec:synthesis} point to a class of systems that has not been studied evenly: systems that are simultaneously \textit{soft, modular, and reconfigurable}, where modules are compliant, the body's shape participates in computation, and different configurations can be compared on equal terms. The reconfigurable inflatable modular robot studied in this thesis is one such system. Its modules are soft and physically coupled through their inflated surfaces; its overall shape is determined by the topological arrangement of those modules; and its locomotion emerges from the interaction of valve-level commands, material compliance, and gravity. Almost every dialectic in Section~\ref{sec:dialectics} passes through this object, which is why it is a productive research site rather than only an engineering artifact.
+
+Within this site, two design consequences shape the research direction. First, \textit{configuration matters in a way it does not for rigid modular robots}: when modules are soft and coupled, geometric arrangement is not just a mounting decision---it conditions how forces propagate, how neighbors deform one another, and what kinds of motion are possible. Second, \textit{control cannot be inherited wholesale from either dialectical tradition}: top-down gait planning struggles with a body that is too compliant to fully command, while purely bottom-up local rules struggle to satisfy goal-directed tasks. Some negotiation between the two is required, and the form that negotiation takes depends on the configuration the robot has.
+
+\subsection{Research Questions}
+
+The broader question this thesis takes its bearings from is one that has been asked in different forms throughout the morphological computation literature: how can the body of a robot, rather than its controller, be made to do more of the work of producing intelligent behavior? That question is too wide to answer in a single thesis. What I narrow it to is a specific class of systems and a specific pair of mechanisms:
+
+\begin{quote}
+\textbf{RQ.} \textit{How can morphological computation in soft modular robotic systems reduce the reliance on top-down control, by letting geometric configuration and material compliance share the computational load with the controller?}
+\end{quote}
+
+This conceptual question opens onto two sub-questions, corresponding to the two design consequences identified above.
+
+\begin{quote}
+\textbf{SubQ1 (Configuration as design variable).} \textit{How does the topological configuration of inflatable modules shape both the motion capacity of the robot and the actuation complexity required to produce it?}
+\end{quote}
+
+\begin{quote}
+\textbf{SubQ2 (Control as negotiation).} \textit{What form of control policy is appropriate for a soft modular body that already performs part of the computation through its passive material coupling?}
+\end{quote}
+
+\subsection{Hypothesis}
+
+The working hypothesis of this thesis takes a single two-sided form: in soft modular robots whose modules are physically coupled through their inflated bodies, the geometric configuration of those modules conditions both \textit{what motion is mechanically possible} and \textit{what form of control is appropriate to produce it}. On one side, configuration is treated as a non-trivial design variable---not all topological arrangements are expected to admit inflation-driven locomotion, and where they do, motion capacity is expected to depend on the symmetry and adjacency of the arrangement rather than on the module count alone. On the other, configuration is treated as a shape of the control problem itself: a controller that ignores the body's passive material coupling and one that recruits it face two different tasks, because the work the body does on its own changes what is left for the controller to specify. The chapters that follow test this two-sided claim through configuration comparison, physical prototyping, and pilot control trials.
