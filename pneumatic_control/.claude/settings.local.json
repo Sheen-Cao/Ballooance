@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/sheen/AppData/Local/Arduino15/packages/arduino/hardware/**)",
+      "Read(//c/Users/sheen/Documents/Arduino/**)"
+    ]
+  }
+}
